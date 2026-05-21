@@ -1,0 +1,3452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle Arena AJJ Online v57 - Online Firebase</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6f8;margin:0;padding:20px;color:#222}
+h1{text-align:center;margin-bottom:5px}.subtitle{text-align:center;color:#555;margin-bottom:20px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px}
+button{border:0;padding:10px 14px;border-radius:8px;cursor:pointer;background:#111827;color:#fff;font-weight:bold}
+button.secondary{background:#2563eb}button.danger{background:#dc2626}button.ok{background:#059669}
+.professor,.box{background:white;border-radius:14px;padding:15px;margin-bottom:25px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+h2{background:#111827;color:#fff;padding:10px;border-radius:10px}
+h3{margin-top:25px;border-left:5px solid #2563eb;padding-left:8px}
+table{width:100%;min-width:1100px;border-collapse:collapse;margin-top:8px;font-size:14px;background:white}
+th,td{border:1px solid #ddd;padding:6px;text-align:left}th{background:#e5e7eb}
+input,select{width:100%;min-width:120px;box-sizing:border-box;padding:7px;border:1px solid #ccc;border-radius:5px}
+.total{font-weight:bold;background:#fef3c7}.small-btn{padding:7px 10px;margin:8px 0 12px 0;background:#059669;font-size:13px}
+.note{background:#fff7ed;border:1px solid #fed7aa;padding:12px;border-radius:10px;margin-bottom:20px;font-size:14px}
+.limit-ok{background:#dcfce7;font-weight:bold;text-align:center;font-size:14px;min-width:220px}
+.limit-stop{background:#b91c1c!important;color:white!important;font-weight:bold;text-align:center;font-size:15px;min-width:260px}
+.limit-alert-row td{background:#fff7ed!important}
+.limit-alert-row .limit-ok{background:#dcfce7!important;color:#111827!important}
+.limit-alert-row .limit-stop{background:#b91c1c!important;color:white!important}
+.pendente-mensalidade{background:#fecaca!important;color:#7f1d1d!important;font-weight:bold}.pendente-mensalidade input{background:#fecaca!important;color:#7f1d1d!important;font-weight:bold;border:2px solid #b91c1c!important}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+@media print{.actions,.small-btn,.note,.box button{display:none}body{background:white}.professor,.box{box-shadow:none;page-break-after:always}}
+.plataforma-gympass{color:#dc2626!important;font-weight:bold}.plataforma-totalpass{color:#16a34a!important;font-weight:bold}
+.cadastroRapidoToggle{cursor:pointer;background:#e5e7eb;border-radius:8px;padding:10px;margin-bottom:8px;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
+.cadastroRapidoConteudo.recolhido{display:none}
+.nomeBuscaWrap{display:flex;align-items:center;gap:6px}
+.nomeBuscaWrap input{width:100%;min-width:180px}
+.lupaBusca{font-size:18px}
+
+.listaCadastradosToggleV51{cursor:pointer;background:#e5e7eb;border-radius:8px;padding:10px;margin:10px 0 8px;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
+.listaCadastradosV51.recolhido{display:none}
+.listaCadastradosV51{max-height:320px;overflow-y:auto;padding-right:4px;border:1px solid #ddd;border-radius:8px;background:#fff}
+.nomeBuscaWrap{display:flex;align-items:center;gap:6px}
+.nomeBuscaWrap input{width:100%;min-width:180px}
+.lupaBusca{font-size:18px}
+
+.buscaAlunoBox{position:relative;display:flex;align-items:center;gap:4px;min-width:230px}
+.buscaAlunoBox input{width:100%;padding-right:34px}
+.buscaAlunoBtn{border:1px solid #ccc;background:#f3f4f6;border-radius:6px;padding:6px 8px;cursor:pointer}
+.listaBuscaAluno{position:absolute;left:0;right:0;top:38px;max-height:260px;overflow-y:auto;background:#fff;border:1px solid #9ca3af;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.18);z-index:9999;display:none}
+.listaBuscaAluno.aberta{display:block}
+.listaBuscaAluno div{padding:8px 10px;cursor:pointer;border-bottom:1px solid #eee}
+.listaBuscaAluno div:hover{background:#e0f2fe}
+
+
+.listaCadastroRapidoToggleV54{
+  cursor:pointer;background:#e5e7eb;border-radius:8px;padding:10px;margin:10px 0;
+  font-weight:bold;display:flex;justify-content:space-between;align-items:center;
+}
+.listaCadastroRapidoV54{
+  max-height:280px;overflow-y:auto;border:1px solid #ddd;border-radius:8px;
+  padding:8px;background:#fff;margin-top:6px;
+}
+.listaCadastroRapidoV54.recolhida{display:none}
+
+
+/* === V55: lista fixa recolhível do cadastro rápido === */
+.lista-alunos-toggle-v55{
+  cursor:pointer;
+  background:#e5e7eb;
+  border-radius:8px;
+  padding:10px;
+  margin:10px 0;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.lista-alunos-box-v55{
+  max-height:280px;
+  overflow-y:auto;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:8px;
+  background:#fff;
+  margin-top:6px;
+}
+.lista-alunos-box-v55.recolhida{display:none}
+.lista-alunos-box-v55 .aluno-item-v55{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  padding:8px;
+  border-bottom:1px solid #eee;
+}
+.lista-alunos-box-v55 .aluno-item-v55:last-child{border-bottom:0}
+.lista-alunos-box-v55 button{
+  padding:5px 8px;
+  font-size:12px;
+}
+
+
+/* === V56: lista fixa recolhível com salvamento === */
+.lista-alunos-toggle-v56{cursor:pointer;background:#e5e7eb;border-radius:8px;padding:10px;margin:10px 0;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
+.lista-alunos-box-v56{max-height:280px;overflow-y:auto;border:1px solid #ddd;border-radius:8px;padding:8px;background:#fff;margin-top:6px}
+.lista-alunos-box-v56.recolhida{display:none}
+.lista-alunos-box-v56 .aluno-item-v56{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px;border-bottom:1px solid #eee}
+.lista-alunos-box-v56 .aluno-item-v56:last-child{border-bottom:0}
+.lista-alunos-box-v56 button{padding:5px 8px;font-size:12px}
+
+</style>
+</head>
+<body>
+<datalist id="listaTodosAlunos"></datalist>
+<h1>Controle de Alunos - Arena AJJ</h1>
+<div class="subtitle">Mensalistas, aulas avulsas, Gympass/Wellhub e TotalPass</div>
+
+<div class="note">
+<b>Cadastro de mensalistas:</b> agora o cadastro é único, com opção de professor <b>JP, Cavaco ou Gustavo</b>, e o resumo soma automaticamente as mensalidades por professor.<br><br><b>Presença dos mensalistas / aulas avulsas para alunos e não alunos:</b> agora a tabela aceita mensalistas, alunos cadastrados nas plataformas e não alunos, com opção de valor extra <b>R$ 10, R$ 15 ou R$ 20</b>. O professor contratado e o plano são puxados automaticamente do cadastro de mensalistas. Aula com professor diferente do contratado entra como R$ 10,00 e não conta na quantidade semanal do plano. Abaixo da tabela, o sistema soma as aulas extras por professor selecionado.<br><br><b>Lista de presença dos mensalistas:</b> a contagem aparece no modelo <b>1/2, 2/2, 3/2</b>, conforme o plano contratado.
+<br>• Plano <b>2x por semana</b>: 1/2, 2/2 e, na 3ª aula, <b>3/2</b>.
+<br>• Plano <b>3x por semana</b>: 1/3, 2/3, 3/3 e, na 4ª aula, <b>4/3</b>.
+<br>• Plano <b>5x por semana</b>: 1/5 até 5/5 e, na 6ª aula, <b>6/5</b>.
+<br><br>Quando ultrapassar o plano, o campo <b>Valor aula extra</b> recebe automaticamente <b>R$ 10,00</b> e entra no total.<br><br><b>Aula avulsa de mensalista fora do professor/horário contratado:</b> agora existe o campo <b>Professor contratado</b> e <b>Professor da aula</b>. Se o aluno estiver cadastrado com JP e fizer aula com Cavaco, ou o contrário, o status fica vermelho e lança automaticamente <b>R$ 10,00</b> na aula avulsa do professor que está dando a aula.<br><br><b>Aulas avulsas:</b> agora existe uma tabela única com:
+<br>• Data
+<br>• Hora
+<br>• Nome do aluno
+<br>• Professor da aula
+<br>• Campo “É aluno da arena?”
+<br><br>Regras automáticas:
+<br>• Se o nome estiver no cadastro de mensalistas, o sistema identifica automaticamente como aluno, puxa o professor contratado e lança R$ 10,00.
+<br>• Se marcar “Não” em aluno da arena, lança R$ 20,00.
+<br>• Os valores entram automaticamente para o professor da aula.
+<br><br><b>Aulas avulsas:</b> os valores não ficam mais preenchidos em linhas vazias. Ao preencher <b>data, hora e nome do aluno</b>, o sistema lança automaticamente:
+<br>• <b>R$ 10,00</b> para mensalista fora do horário contratado.
+<br>• <b>R$ 20,00</b> para aluno não mensalista.
+<br><br><b>Plataformas:</b> o repasse de <b>R$ 9,85</b> só aparece quando houver aluno, data e check-in OK.<br><br>
+<br><br><b>Plataformas por professor:</b> agora o check-in possui campo de professor <b>JP, Cavaco ou Gustavo</b>.
+<br>• <b>Gympass / Wellhub / Uber</b>: R$ 10,66 por check-in válido.
+<br>• <b>TotalPass</b>: R$ 9,85 por check-in válido.
+<br>• O limite é de <b>12 check-ins por aluno no mês</b>, independentemente do professor.
+<br>• A partir do <b>13º check-in</b>, o valor não soma mais; o campo mostra “13º check-in”, “14º check-in” e assim por diante.<br><br><br><br><b>Plataformas:</b> use apenas a tabela de <b>Gympass / Wellhub / Hub / TotalPass</b>, selecionando o professor na própria linha.<br>• Gympass / Wellhub / Hub: <b>R$ 10,66</b>.<br>• TotalPass: <b>R$ 9,63</b>.<br>• Até o <b>12º check-in</b> do aluno no mês computa.<br>• Do <b>13º check-in</b> em diante, aparece “13º check-in”, “14º check-in” etc. e não soma no professor.<br><br><b>Gympass / Wellhub / TotalPass:</b> valor automático de <b>R$ 9,85</b>. Até a <b>12ª aula do mês</b> contabiliza; da <b>13ª em diante</b> fica <b>R$ 0,00</b>.
+</div>
+
+<div class="actions">
+<button onclick="saveData()">Salvar no navegador</button>
+<button class="secondary" onclick="downloadBackup()">Baixar backup</button>
+<button class="secondary" onclick="window.print()">Imprimir / Salvar PDF</button>
+<button class="danger" onclick="clearData()">Limpar tudo</button>
+</div>
+
+<div class="box">
+<h2>Cadastro rápido de alunos Gympass / Wellhub / TotalPass</h2>
+<div class="grid"><input id="novoAluno" placeholder="Nome do aluno"><button class="ok" onclick="addAluno()">Adicionar aluno</button></div>
+<p style="font-size:13px;color:#555;">Após cadastrar, o nome aparece na lista de seleção dos check-ins.</p>
+<table id="tabelaAlunos"><thead><tr><th>Alunos cadastrados</th><th>Ação</th></tr></thead><tbody></tbody></table>
+</div>
+
+<div class="box">
+<h2>Cadastro único</h2>
+<p style="font-size:13px;color:#555;">Cadastre mensalistas e não mensalistas em uma única tabela. Se escolher o plano Não mensalista, a mensalidade fica automaticamente R$ 0,00. O vencimento é calculado automaticamente para 1 mês após a data de cadastro. No próprio dia do vencimento, ou após ele, se estiver como Pago? Não, os campos Vencimento, Nome do aluno e Valor mensalidade ficam vermelhos. A mensalidade somente será computada no total geral e no resumo do professor quando o campo Pago? estiver marcado como Sim.</p>
+<div class="grid" style="margin-bottom:10px;">
+  <input id="buscaCadastroUnico" placeholder="🔍 Pesquisar nome do aluno" oninput="filtrarCadastroUnico();document.querySelectorAll('select').forEach(s=>{ if(Array.from(s.options).some(o=>String(o.textContent).includes('TotalPass')||String(o.textContent).includes('Gympass'))) atualizarCorPlataforma(s); })">
+</div>
+<button class="small-btn" onclick="addRow('mensalistas_unico')">+ Adicionar aluno</button>
+<table id="mensalistas_unico" data-valor="true" data-mensalistas="true">
+<thead><tr>
+<th>Data cadastro</th><th>Vencimento</th><th>Nome do aluno</th><th>Plano contratado</th><th>Entrada</th><th>Professor</th><th>Desconto</th><th>Valor mensalidade</th><th>Pago?</th><th>Ação</th>
+</tr></thead>
+<tbody></tbody>
+<tfoot>
+<tr class="total"><td colspan="7">TOTAL GERAL MENSALISTAS PAGOS</td><td class="totalValue">R$ 0,00</td><td></td><td></td></tr>
+</tfoot>
+</table>
+
+<h3>Resumo de mensalidades por professor</h3>
+<table id="resumoMensalistas">
+<thead><tr><th>Professor</th><th>Total de mensalidades</th></tr></thead>
+<tbody>
+<tr><td>JP</td><td id="totalMensalista_JP">R$ 0,00</td></tr>
+<tr><td>Cavaco</td><td id="totalMensalista_Cavaco">R$ 0,00</td></tr>
+<tr><td>Gustavo</td><td id="totalMensalista_Gustavo">R$ 0,00</td></tr>
+<tr><td>Não mensalistas</td><td id="totalMensalista_NaoMensalista">R$ 0,00</td></tr>
+</tbody>
+</table>
+</div>
+
+
+<div class="box">
+<h2>Presença dos mensalistas / aulas avulsas para alunos e não alunos</h2>
+<p style="font-size:13px;color:#555;">Selecione o aluno, o tipo de aluno e o professor da aula. A lista traz mensalistas e alunos cadastrados nas plataformas. Para não aluno, o valor padrão será R$ 20,00.</p>
+<button class="small-btn" onclick="addRow('presenca_mensalistas_unica')">+ Adicionar presença</button>
+<table id="presenca_mensalistas_unica" data-valor="true" data-presenca="true">
+<thead><tr>
+<th>Data</th><th>Hora</th><th>Nome do aluno</th><th>Tipo</th><th>Professor da aula</th><th>Professor contratado</th><th>Plano contratado</th><th>Qtd. na semana</th><th>Status</th><th>Valor aula extra</th><th>Ação</th>
+</tr></thead>
+<tbody></tbody>
+<tfoot><tr class="total"><td colspan="9">TOTAL DE AULAS EXTRAS / AVULSAS</td><td class="totalValue">R$ 0,00</td><td></td></tr></tfoot>
+</table>
+
+<h3>Resumo de aulas extras dos mensalistas por professor</h3>
+<table id="resumoPresencaExtras">
+<thead><tr><th>Professor</th><th>Total de aulas extras</th></tr></thead>
+<tbody>
+<tr><td>JP</td><td id="totalPresencaExtra_JP">R$ 0,00</td></tr>
+<tr><td>Cavaco</td><td id="totalPresencaExtra_Cavaco">R$ 0,00</td></tr>
+<tr><td>Gustavo</td><td id="totalPresencaExtra_Gustavo">R$ 0,00</td></tr>
+</tbody>
+</table>
+</div>
+
+
+<div class="box">
+<h2>Plataformas - Gympass / Wellhub / Hub / TotalPass</h2>
+<p style="font-size:13px;color:#555;">Use uma única tabela para todos os professores. Selecione JP, Cavaco ou Gustavo na linha do check-in. O resumo abaixo soma automaticamente o repasse por professor.</p>
+<button class="small-btn" onclick="addRow('plataformas_unica')">+ Adicionar check-in</button>
+<table id="plataformas_unica" data-valor="true" data-gym="true">
+<thead><tr>
+<th>Data</th><th>Hora</th><th>Nome</th><th>Professor</th><th>Plataforma</th><th>Check-in OK?</th><th>Qtd. no mês</th><th>Status</th><th>Valor repasse</th><th>Ação</th>
+</tr></thead>
+<tbody></tbody>
+<tfoot><tr class="total"><td colspan="8">TOTAL GERAL DAS PLATAFORMAS</td><td class="totalValue">R$ 0,00</td><td></td></tr></tfoot>
+</table>
+
+<p style="font-size:13px;color:#555;"><b>Regra:</b> até o 12º check-in do aluno no mês o repasse é contabilizado. A partir do 13º check-in, a quantidade continua aparecendo, mas o valor do repasse fica R$ 0,00.</p>
+<h3>Resumo total por plataforma</h3>
+<table id="resumoPlataformasSeparado">
+<thead><tr><th>Plataforma</th><th>Total contabilizado</th></tr></thead>
+<tbody>
+<tr><td>Gympass / Wellhub / Hub</td><td id="totalResumoGympass">R$ 0,00</td></tr>
+<tr><td>TotalPass</td><td id="totalResumoTotalpass">R$ 0,00</td></tr>
+</tbody>
+</table>
+
+<h3>Resumo das plataformas por professor</h3>
+<table id="resumoPlataformas">
+<thead><tr><th>Professor</th><th>Total recebido</th></tr></thead>
+<tbody>
+<tr><td>JP</td><td id="totalPlataforma_JP">R$ 0,00</td></tr>
+<tr><td>Cavaco</td><td id="totalPlataforma_Cavaco">R$ 0,00</td></tr>
+<tr><td>Gustavo</td><td id="totalPlataforma_Gustavo">R$ 0,00</td></tr>
+</tbody>
+</table>
+</div>
+
+<div id="content"></div>
+
+<script>
+const professores=["JP","Cavaco","Gustavo"],VALOR_REPASSE_GYMPASS=10.66,VALOR_REPASSE_TOTALPASS=9.63,LIMITE_AULAS_MES=12,VALOR_AULA_EXTRA=10;
+let alunos=JSON.parse(localStorage.getItem("controle_arena_ajj_alunos")||"[]");
+
+const secoes=[
+{key:"mensalistas",titulo:"Mensalistas - Cadastro e mensalidade",colunas:["Data cadastro","Nome do aluno","Plano contratado","Entrada","Saída","Valor mensalidade"],tipoValor:true,mensalistas:true},
+{key:"presenca_mensalistas",titulo:"Presença dos Mensalistas - selecione o nome em cada aula",colunas:["Data","Hora","Nome do aluno","Plano contratado","Qtd. na semana","Status","Valor aula extra"],tipoValor:true,presencaMensalista:true},
+
+{key:"aulas_avulsas",titulo:"Aulas avulsas",colunas:["Data","Hora","Nome do aluno","Professor da aula","É aluno da arena?","Professor contratado","Status","Valor"],tipoValor:true},
+{key:"gympass_totalpass",titulo:"Gympass / Wellhub / TotalPass",colunas:["Data","Hora","Nome","Professor","Plataforma","Check-in OK?","Quem realizou o check-in","Qtd. no mês","Status","Valor repasse"],tipoValor:true,gym:true}
+];
+
+function headers(table){return Array.from(table.querySelectorAll("thead th")).map(th=>th.innerText)}
+function getCellValue(row,table,headerName){const ths=headers(table),index=ths.indexOf(headerName);if(index<0)return"";const el=row.children[index].querySelector("input, select");return el?el.value:row.children[index].innerText}
+function setCellValue(row,table,headerName,value){const ths=headers(table),index=ths.indexOf(headerName);if(index<0)return;const el=row.children[index].querySelector("input, select");if(el)el.value=value;else row.children[index].innerText=value}
+function getStatusCell(row,table){const i=headers(table).indexOf("Status");return i>=0?row.children[i]:null}
+
+function alunoOptions(selected=""){
+selected = (selected && selected !== "none" && selected !== "undefined") ? selected : "";
+let opts='<option value=""></option>';
+alunos.sort((a,b)=>a.localeCompare(b)).forEach(a=>opts+=`<option ${a===selected?"selected":""}>${a}</option>`);
+return opts;
+}
+
+function mensalistaOptions(professor,selected=""){
+selected = (selected && selected !== "none" && selected !== "undefined") ? selected : "";
+let nomes=[];
+const table=document.getElementById("mensalistas_unico");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const nome=getCellValue(row,table,"Nome do aluno");
+const plano=getCellValue(row,table,"Plano contratado");
+const prof=getCellValue(row,table,"Professor");
+if(nome && nome !== "none" && nome !== "undefined" && plano && prof===professor && !nomes.includes(nome))nomes.push(nome);
+});
+}
+let opts='<option value=""></option>';
+nomes.sort((a,b)=>a.localeCompare(b)).forEach(n=>opts+=`<option ${n===selected?"selected":""}>${n}</option>`);
+if(selected && !nomes.includes(selected)){
+ opts+=`<option selected>${selected}</option>`;
+}
+return opts;
+}
+
+function renderAlunos(){
+const tbody=document.querySelector("#tabelaAlunos tbody");tbody.innerHTML="";
+alunos.sort((a,b)=>a.localeCompare(b)).forEach((nome,index)=>tbody.insertAdjacentHTML("beforeend",`<tr><td>${nome}</td><td><button class="danger" onclick="removeAluno(${index})">Excluir</button></td></tr>`));
+refreshAlunoSelects();
+}
+function addAluno(){const input=document.getElementById("novoAluno"),nome=input.value.trim();if(!nome)return alert("Digite o nome do aluno.");if(!alunos.includes(nome))alunos.push(nome);input.value="";localStorage.setItem("controle_arena_ajj_alunos",JSON.stringify(alunos));renderAlunos();refreshAlunoSelects();saveDataAuto()}
+function removeAluno(index){if(!confirm("Deseja excluir este aluno da lista?"))return;alunos.splice(index,1);localStorage.setItem("controle_arena_ajj_alunos",JSON.stringify(alunos));renderAlunos();refreshAlunoSelects();saveDataAuto()}
+
+function refreshAlunoSelects(){
+document.querySelectorAll("select.alunoSelect").forEach(sel=>{const atual=sel.value;sel.innerHTML=alunoOptions(atual)});
+document.querySelectorAll("select.alunoPlataformaSelect").forEach(sel=>{
+const atual=sel.value;
+sel.innerHTML=alunosPlataformaOptions(atual);
+sel.value=atual;
+});
+document.querySelectorAll("select.mensalistaSelect").forEach(sel=>{
+const atual=sel.value, table=sel.closest("table"), professor=table.id.split("_")[0];
+sel.innerHTML=mensalistaOptions(professor,atual);
+});
+document.querySelectorAll("select.mensalistaTodosSelect").forEach(sel=>{
+const atual=sel.value;
+sel.innerHTML=mensalistaTodosOptions(atual);
+if(atual && !Array.from(sel.options).some(opt=>opt.value===atual)){
+ const opt=document.createElement("option");
+ opt.value=atual;
+ opt.textContent=atual;
+ opt.selected=true;
+ sel.appendChild(opt);
+}else{
+ sel.value=atual;
+}
+});
+document.querySelectorAll("select.nomesPresencaSelect").forEach(sel=>{
+const atual=sel.value;
+sel.innerHTML=nomesPresencaOptions(atual);
+if(atual && !Array.from(sel.options).some(opt=>opt.value===atual)){
+ const opt=document.createElement("option");
+ opt.value=atual;
+ opt.textContent=atual;
+ opt.selected=true;
+ sel.appendChild(opt);
+}else{
+ sel.value=atual;
+}
+});
+}
+
+function createTable(professor,secao){
+const tableId=`${professor}_${secao.key}`;
+let html=`<h3>${secao.titulo}</h3><button class="small-btn" onclick="addRow('${tableId}')">+ Adicionar linha</button><table id="${tableId}" data-professor="${professor}" data-valor="${secao.tipoValor}" data-gym="${secao.gym||false}" data-presenca="${secao.presencaMensalista||false}" data-mensalistas="${secao.mensalistas||false}"><thead><tr>`;
+secao.colunas.forEach(c=>html+=`<th>${c}</th>`);html+="<th>Ação</th></tr></thead><tbody>";
+for(let i=0;i<15;i++)html+=rowHtml(secao,professor);
+html+="</tbody>";
+if(secao.tipoValor)html+=`<tfoot><tr class="total"><td colspan="${secao.colunas.length-1}">TOTAL CONTABILIZADO</td><td class="totalValue">R$ 0,00</td><td></td></tr></tfoot>`;
+html+="</table>";return html
+}
+
+function planoSelect(){
+return `<select onchange="refreshAlunoSelects();updateTotals();saveDataAuto();"><option></option><option>2x na semana</option><option>3x na semana</option><option>4x na semana</option><option>5x na semana</option><option>Não mensalista</option><option>Aluno</option><option>Outro</option></select>`;
+}
+
+
+
+
+function horarioSelect(){
+return `<select onchange="updateTotals();saveDataAuto();">
+<option value=""></option>
+<option value="08:00">08:00</option>
+<option value="09:00">09:00</option>
+<option value="10:00">10:00</option>
+<option value="11:00">11:00</option>
+<option value="12:00">12:00</option>
+<option value="13:00">13:00</option>
+<option value="14:00">14:00</option>
+<option value="15:00">15:00</option>
+<option value="16:00">16:00</option>
+<option value="17:00">17:00</option>
+<option value="18:00">18:00</option>
+<option value="19:00">19:00</option>
+<option value="20:00">20:00</option>
+<option value="21:00">21:00</option>
+<option value="22:00">22:00</option>
+<option value="23:00">23:00</option>
+</select>`;
+}
+
+function professorSelect(){
+return `<select onchange="refreshAlunoSelects();updateTotals();saveDataAuto();"><option></option><option>JP</option><option>Cavaco</option><option>Gustavo</option></select>`;
+}
+
+
+function mensalistaTodosOptions(selected=""){
+selected = (selected && selected !== "none" && selected !== "undefined") ? selected : "";
+let nomes=[];
+const table=document.getElementById("mensalistas_unico");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const nome=getCellValue(row,table,"Nome do aluno");
+const plano=getCellValue(row,table,"Plano contratado");
+if(nome && nome !== "none" && nome !== "undefined" && plano && !nomes.includes(nome))nomes.push(nome);
+});
+}
+let opts='<option value=""></option>';
+nomes.sort((a,b)=>a.localeCompare(b)).forEach(n=>opts+=`<option ${n===selected?"selected":""}>${n}</option>`);
+return opts;
+}
+
+
+function nomesPresencaOptions(selected=""){
+selected = (selected && selected !== "none" && selected !== "undefined") ? selected : "";
+let nomes=[];
+
+/* Cadastro único */
+const mensalistas=document.getElementById("mensalistas_unico");
+if(mensalistas){
+mensalistas.querySelectorAll("tbody tr").forEach(row=>{
+const nome=getCellValue(row,mensalistas,"Nome do aluno");
+if(nome && nome !== "none" && nome !== "undefined" && !nomes.includes(nome))nomes.push(nome);
+});
+}
+
+/* Cadastro rápido das plataformas */
+alunos.forEach(nome=>{
+if(nome && nome !== "none" && nome !== "undefined" && !nomes.includes(nome))nomes.push(nome);
+});
+
+/* Nomes já lançados na tabela de plataformas */
+const plataformas=document.getElementById("plataformas_unica");
+if(plataformas){
+plataformas.querySelectorAll("tbody tr").forEach(row=>{
+const nome=getCellValue(row,plataformas,"Nome");
+if(nome && nome !== "none" && nome !== "undefined" && !nomes.includes(nome))nomes.push(nome);
+});
+}
+
+/* Tabelas antigas de plataforma, caso existam */
+document.querySelectorAll("table[data-gym='true']").forEach(table=>{
+table.querySelectorAll("tbody tr").forEach(row=>{
+const nome=getCellValue(row,table,"Nome");
+if(nome && nome !== "none" && nome !== "undefined" && !nomes.includes(nome))nomes.push(nome);
+});
+});
+
+let opts='<option value=""></option>';
+nomes.sort((a,b)=>a.localeCompare(b)).forEach(n=>opts+=`<option ${n===selected?"selected":""}>${n}</option>`);
+if(selected && !nomes.includes(selected)){
+ opts+=`<option selected>${selected}</option>`;
+}
+return opts;
+}
+
+function valorExtraSelect(){
+return `<select onchange="updateTotals();saveDataAuto();">
+<option value=""></option>
+<option value="10">R$ 10,00</option>
+<option value="15">R$ 15,00</option>
+<option value="20">R$ 20,00</option>
+</select>`;
+}
+
+
+
+function alunosPlataformaOptions(selected=""){
+selected = (selected && selected !== "none" && selected !== "undefined") ? selected : "";
+let opts='<option value=""></option>';
+alunos.sort((a,b)=>a.localeCompare(b)).forEach(a=>opts+=`<option ${a===selected?"selected":""}>${a}</option>`);
+if(selected && !alunos.includes(selected)){
+ opts+=`<option selected>${selected}</option>`;
+}
+return opts;
+}
+
+function plataformaSelect(){
+return `<select onchange="atualizarCorPlataforma(this);updateTotals();saveDataAuto();">
+<option value=""></option>
+<option class="plataforma-gympass">Gympass / Wellhub / Hub</option>
+<option class="plataforma-totalpass">TotalPass</option>
+</select>`;
+}
+
+function atualizarCorPlataforma(sel){
+sel.classList.remove("plataforma-gympass","plataforma-totalpass");
+const v=(sel.value||"").toLowerCase();
+if(v.includes("totalpass"))sel.classList.add("plataforma-totalpass");
+else if(v.includes("gympass")||v.includes("wellhub")||v.includes("hub"))sel.classList.add("plataforma-gympass");
+}
+
+function checkinSelect(){
+return `<select onchange="updateTotals();saveDataAuto();">
+<option value=""></option>
+<option>OK</option>
+<option>Pendente</option>
+</select>`;
+}
+
+function rowHtmlPlataformaUnica(){
+return `<tr>
+<td><input type="date" oninput="updateTotals();saveDataAuto();"></td>
+<td>${horarioSelect()}</td>
+<td><select class="alunoPlataformaSelect" onchange="updateTotals();saveDataAuto();">${alunosPlataformaOptions()}</select></td>
+<td>${professorSelect()}</td>
+<td>${plataformaSelect()}</td>
+<td>${checkinSelect()}</td>
+<td><input type="text" readonly></td>
+<td class="statusMes"></td>
+<td><input type="text" value="" readonly></td>
+<td><button class="danger" onclick="this.closest('tr').remove();updateTotals();saveDataAuto();">Excluir</button></td>
+</tr>`;
+}
+
+function rowHtmlPresencaUnica(){
+return `<tr>
+<td><input type="date" oninput="updateTotals();saveDataAuto();"></td>
+<td>${horarioSelect()}</td>
+<td><select class="nomesPresencaSelect" onchange="autoFillPresencaUnica(this);updateTotals();saveDataAuto();">${nomesPresencaOptions()}</select></td>
+<td><select onchange="updateTotals();saveDataAuto();"><option></option><option>Aluno</option><option>Não aluno</option></select></td>
+<td>${professorSelect()}</td>
+<td><input type="text" readonly></td>
+<td>${planoSelect()}</td>
+<td><input type="text" readonly></td>
+<td class="statusMes"></td>
+<td>${valorExtraSelect()}</td>
+<td><button class="danger" onclick="this.closest('tr').remove();updateTotals();saveDataAuto();">Excluir</button></td>
+</tr>`;
+}
+
+
+function addOneMonth(dateStr){
+if(!dateStr)return "";
+const d=new Date(dateStr+"T00:00:00");
+if(isNaN(d.getTime()))return "";
+const day=d.getDate();
+d.setMonth(d.getMonth()+1);
+if(d.getDate()!==day)d.setDate(0);
+return d.toISOString().slice(0,10);
+}
+
+function hojeISO(){
+return new Date().toISOString().slice(0,10);
+}
+
+
+function descontoSelect(){
+return `<select onchange="aplicarDescontoLinha(this);updateTotals();saveDataAuto();">
+<option value="">Sem desconto</option>
+<option value="10">10%</option>
+<option value="15">15%</option>
+<option value="20">20%</option>
+</select>`;
+}
+
+function valorBasePlano(plano){
+if(plano==="2x na semana")return 110;
+if(plano==="3x na semana")return 130;
+if(plano==="4x na semana")return 140;
+if(plano==="5x na semana")return 150;
+return 0;
+}
+
+function aplicarDescontoLinha(el){
+const row=el.closest("tr");
+const table=row.closest("table");
+
+const plano=getCellValue(row,table,"Plano contratado");
+const desconto=parseFloat(getCellValue(row,table,"Desconto") || 0);
+
+let valor=valorBasePlano(plano);
+
+if(plano==="Não mensalista" || plano==="Aluno"){
+ valor=0;
+}
+
+if(valor>0 && desconto>0){
+ valor = valor - (valor * (desconto/100));
+}
+
+/* Se estiver Sem desconto, mantém o valor integral do plano */
+if(!isNaN(valor)){
+ setCellValue(row,table,"Valor mensalidade",valor.toFixed(2));
+}
+
+updateTotals();
+saveDataAuto();
+}
+
+function pagoSelect(){
+return `<select onchange="updateTotals();saveDataAuto();"><option>Não</option><option>Sim</option></select>`;
+}
+
+function atualizarVencimentoCadastro(input){
+const row=input.closest("tr");
+const table=input.closest("table");
+const venc=addOneMonth(input.value);
+setCellValue(row,table,"Vencimento",venc);
+updateTotals();
+saveDataAuto();
+}
+
+function rowHtmlMensalistaUnico(){
+return `<tr>
+<td><input type="date" oninput="atualizarVencimentoCadastro(this);refreshAlunoSelects();updateTotals();saveDataAuto();"></td>
+<td><input type="date" readonly></td>
+<td><input type="text" oninput="refreshAlunoSelects();updateTotals();saveDataAuto();filtrarCadastroUnico();document.querySelectorAll('select').forEach(s=>{ if(Array.from(s.options).some(o=>String(o.textContent).includes('TotalPass')||String(o.textContent).includes('Gympass'))) atualizarCorPlataforma(s); })" placeholder="Nome do aluno"></td>
+<td><select onchange="aplicarDescontoLinha(this);refreshAlunoSelects();updateTotals();saveDataAuto();">
+<option value=""></option>
+<option>2x na semana</option>
+<option>3x na semana</option>
+<option>4x na semana</option>
+<option>5x na semana</option>
+<option>Não mensalista</option>
+<option>Aluno</option>
+<option>Outro</option>
+</select></td>
+<td>${horarioSelect()}</td>
+<td>${professorSelect()}</td>
+<td>${descontoSelect()}</td>
+<td><input type="number" step="0.01" oninput="updateTotals();saveDataAuto();" placeholder="Valor"></td>
+<td>${pagoSelect()}</td>
+<td><button class="danger" onclick="this.closest('tr').remove();refreshAlunoSelects();updateTotals();saveDataAuto();filtrarCadastroUnico();document.querySelectorAll('select').forEach(s=>{ if(Array.from(s.options).some(o=>String(o.textContent).includes('TotalPass')||String(o.textContent).includes('Gympass'))) atualizarCorPlataforma(s); })">Excluir</button></td>
+</tr>`;
+}
+
+function rowHtml(secao,professor){
+let html="<tr>";
+secao.colunas.forEach(c=>{
+let input="text",value="";
+if(c==="Data"||c==="Data cadastro")input="date";
+if(c==="Hora"||c==="Entrada"||c==="Saída")input="time";
+if(c.includes("Valor")&&!secao.gym&&!secao.presencaMensalista){input="number";value=""}
+
+if(c==="Hora"||c==="Entrada"||c==="Saída")html+=`<td>${horarioSelect()}</td>`;
+else if(c==="Plano contratado")html+=`<td><select onchange="aplicarDescontoLinha(this.closest('tr').querySelector('td:nth-child(7) select'));updateTotals();saveDataAuto();">${planoSelect().replace("<select onchange=\"updateTotals();saveDataAuto();\">","").replace("</select>","")}</select></td>`;
+else if(c==="Nome"&&secao.gym)html+=`<td><select class="alunoSelect" onchange="updateTotals();saveDataAuto();">${alunoOptions()}</select></td>`;
+else if(c==="Nome do aluno"&&secao.presencaMensalista)html+=`<td><select class="mensalistaSelect" onchange="autoFillPlano(this);updateTotals();saveDataAuto();">${mensalistaOptions(professor)}</select></td>`;
+else if(c==="Professor contratado")html+=`<td><select onchange="updateTotals();saveDataAuto();"><option></option><option>JP</option><option>Cavaco</option><option>Gustavo</option></select></td>`;
+else if(c==="Professor da aula")html+=`<td><select onchange="updateTotals();saveDataAuto();"><option></option><option>JP</option><option>Cavaco</option><option>Gustavo</option></select></td>`;
+else if(c==="É aluno da arena?")html+=`<td><select onchange="updateTotals();saveDataAuto();"><option></option><option>Sim</option><option>Não</option></select></td>`;
+else if(c==="Status")html+=`<td class="statusMes"></td>`;
+else if(c==="Professor")html+=`<td><select onchange="updateTotals();saveDataAuto();"><option></option><option>JP</option><option>Cavaco</option><option>Gustavo</option></select></td>`;
+else if(c==="Plataforma")html+=`<td><select onchange="updateTotals();saveDataAuto();"><option></option><option>Gympass / Wellhub / Hub</option><option>TotalPass</option></select></td>`;
+else if(c==="Check-in OK?")html+=`<td><select onchange="updateTotals();saveDataAuto();"><option></option><option>OK</option><option>Pendente</option></select></td>`;
+
+else if(c==="Qtd. no mês"||c==="Qtd. na semana")html+=`<td><input type="text" readonly></td>`;
+else if(c==="Status")html+=`<td class="statusMes"></td>`;
+else if(c==="Valor repasse")html+=`<td><input type="text" value="" readonly></td>`;
+else if(c==="Valor aula extra")html+=`<td><input type="number" step="0.01" value="" placeholder="Digite o valor" oninput="updateTotals();saveDataAuto();"></td>`;
+else html+=`<td><input type="${input}" value="${value}" oninput="refreshAlunoSelects();updateTotals();saveDataAuto();"></td>`;
+});
+html+=`<td><button class="danger" onclick="this.closest('tr').remove();refreshAlunoSelects();updateTotals();saveDataAuto();">Excluir</button></td></tr>`;
+return html
+}
+
+function render(){let html="";professores.forEach(prof=>{html+=`<div class="professor"><h2>Professor ${prof}</h2>`;secoes.forEach(secao=>{ if(secao.key!=="mensalistas" && secao.key!=="presenca_mensalistas" && secao.key!=="aulas_avulsas" && secao.key!=="gympass_totalpass") html+=createTable(prof,secao); });html+="</div>"});document.getElementById("content").innerHTML=html}
+function addRow(tableId){
+const table=document.getElementById(tableId);
+if(tableId==="mensalistas_unico"){
+ table.querySelector("tbody").insertAdjacentHTML("beforeend",rowHtmlMensalistaUnico());
+ refreshAlunoSelects();updateTotals();saveDataAuto();return;
+}
+if(tableId==="presenca_mensalistas_unica"){
+ table.querySelector("tbody").insertAdjacentHTML("beforeend",rowHtmlPresencaUnica());
+ refreshAlunoSelects();updateTotals();saveDataAuto();return;
+}
+if(tableId==="plataformas_unica"){
+ table.querySelector("tbody").insertAdjacentHTML("beforeend",rowHtmlPlataformaUnica());
+ updateTotals();saveDataAuto();return;
+}
+const secao=secoes.find(s=>tableId.includes(s.key)),prof=table.dataset.professor;
+table.querySelector("tbody").insertAdjacentHTML("beforeend",rowHtml(secao,prof));
+refreshAlunoSelects();updateTotals();saveDataAuto();
+}
+
+function planoLimite(plano){
+plano=(plano||"").toLowerCase();
+if(plano.includes("2x")||plano.includes("2 vezes")||plano.includes("duas"))return 2;
+if(plano.includes("3x")||plano.includes("3 vezes")||plano.includes("três")||plano.includes("tres"))return 3;
+if(plano.includes("5x")||plano.includes("5 vezes")||plano.includes("cinco"))return 5;
+return 999;
+}
+
+function getPlanoAluno(nome,professor){
+let plano="";
+const table=document.getElementById("mensalistas_unico");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const n=getCellValue(row,table,"Nome do aluno");
+const p=getCellValue(row,table,"Plano contratado");
+const prof=getCellValue(row,table,"Professor");
+if(n&&p&&n.trim().toLowerCase()===nome.trim().toLowerCase() && (!professor || prof===professor))plano=p;
+});
+}
+return plano;
+}
+
+function getProfessorContratadoAluno(nome){
+let profContratado="";
+const table=document.getElementById("mensalistas_unico");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const n=getCellValue(row,table,"Nome do aluno");
+const prof=getCellValue(row,table,"Professor");
+if(n&&prof&&n.trim().toLowerCase()===nome.trim().toLowerCase())profContratado=prof;
+});
+}
+return profContratado;
+}
+
+
+function getDadosMensalista(nome){
+let dados={professor:"",plano:""};
+const table=document.getElementById("mensalistas_unico");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const n=getCellValue(row,table,"Nome do aluno");
+if(n&&n.trim().toLowerCase()===nome.trim().toLowerCase()){
+dados.professor=getCellValue(row,table,"Professor");
+dados.plano=getCellValue(row,table,"Plano contratado");
+}
+});
+}
+return dados;
+}
+
+function autoFillPresencaUnica(select){
+const row=select.closest("tr");
+const table=select.closest("table");
+const nome=select.value;
+if(nome){
+const dados=getDadosMensalista(nome);
+if(dados.professor || dados.plano){
+ setCellValue(row,table,"Tipo","Aluno");
+ setCellValue(row,table,"Professor contratado",dados.professor);
+ setCellValue(row,table,"Plano contratado",dados.plano);
+}else{
+ setCellValue(row,table,"Professor contratado","");
+ setCellValue(row,table,"Plano contratado","");
+}
+}
+}
+
+function autoFillPlano(select){
+const row=select.closest("tr"),table=select.closest("table"),nome=select.value,professor=table.dataset.professor;
+if(table.dataset.presenca==="true"&&nome){
+const plano=getPlanoAluno(nome,professor);
+if(plano)setCellValue(row,table,"Plano contratado",plano);
+}
+}
+
+function getWeekKey(dateStr){
+const d=new Date(dateStr+"T00:00:00");
+const day=d.getDay()||7;
+d.setDate(d.getDate()+4-day);
+const yearStart=new Date(d.getFullYear(),0,1);
+const week=Math.ceil((((d-yearStart)/86400000)+1)/7);
+return d.getFullYear()+"-S"+String(week).padStart(2,"0");
+}
+
+function updatePresencaMensalistas(){
+let rowsPlano=[];
+const table=document.getElementById("presenca_mensalistas_unica");
+if(!table)return;
+
+/* Primeiro, separa: mensalista dentro do plano, extra, aluno avulso e não aluno */
+table.querySelectorAll("tbody tr").forEach(row=>{
+row.classList.remove("limit-alert-row");
+
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+let nome=getCellValue(row,table,"Nome do aluno");
+let tipo=getCellValue(row,table,"Tipo");
+const profAula=getCellValue(row,table,"Professor da aula");
+
+if(nome==="none"||nome==="undefined")nome="";
+
+let dados=nome?getDadosMensalista(nome):{professor:"",plano:""};
+let profContratado=getCellValue(row,table,"Professor contratado") || dados.professor;
+let plano=getCellValue(row,table,"Plano contratado") || dados.plano;
+
+if(nome && (dados.professor || dados.plano)){
+ if(!tipo){tipo="Aluno";setCellValue(row,table,"Tipo","Aluno");}
+ if(profContratado)setCellValue(row,table,"Professor contratado",profContratado);
+ if(plano)setCellValue(row,table,"Plano contratado",plano);
+}
+
+const st=getStatusCell(row,table);
+
+if(data && nome && profAula){
+
+ if(tipo==="Não aluno"){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   setCellValue(row,table,"Valor aula extra","20");
+   if(st){st.innerText="NÃO ALUNO — aula avulsa R$ 20,00";st.className="limit-stop";}
+   return;
+ }
+
+ if(tipo==="Aluno" && (!plano || !profContratado)){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+   if(st){st.innerText="ALUNO / PLATAFORMA — aula avulsa";st.className="limit-ok";}
+   return;
+ }
+
+ if(tipo==="Aluno" && plano && profContratado){
+   /* Se for professor diferente do contratado, vira aula extra e NÃO conta no plano semanal */
+   if(profContratado && profAula && profContratado!==profAula){
+     row.classList.add("limit-alert-row");
+     setCellValue(row,table,"Qtd. na semana","Extra");
+     if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+
+     if(st){
+       st.innerText=`AULA EXTRA — professor diferente do contratado (${profContratado} → ${profAula})`;
+       st.className="limit-stop";
+     }
+   }else{
+     /* Só entra na contagem semanal se for com o professor contratado */
+     rowsPlano.push({table,row,data,hora,nome,plano,profAula,profContratado,week:getWeekKey(data)});
+   }
+   return;
+ }
+
+ if(!tipo){
+   setCellValue(row,table,"Qtd. na semana","");
+   setCellValue(row,table,"Valor aula extra","");
+   if(st){st.innerText="Selecione se é Aluno ou Não aluno";st.className="limit-stop";}
+   return;
+ }
+
+}else{
+ setCellValue(row,table,"Qtd. na semana","");
+ setCellValue(row,table,"Valor aula extra","");
+ if(st){
+  if(data&&!nome){st.innerText="Selecione o nome do aluno para contar";st.className="limit-stop";}
+  else if(nome&&!data){st.innerText="Informe a data da aula";st.className="limit-stop";}
+  else if(nome&&!profAula){st.innerText="Selecione o professor da aula";st.className="limit-stop";}
+  else{st.innerText="";st.className="statusMes";}
+ }
+}
+});
+
+/* Conta somente as aulas feitas com o professor contratado */
+rowsPlano.sort((a,b)=>{
+const ka=a.nome+"|"+a.week;
+const kb=b.nome+"|"+b.week;
+if(ka!==kb)return ka.localeCompare(kb);
+const da=(a.data||"")+" "+(a.hora||"");
+const db=(b.data||"")+" "+(b.hora||"");
+return da.localeCompare(db);
+});
+
+const counts={};
+rowsPlano.forEach(item=>{
+const key=item.nome+"|"+item.week;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+const limite=planoLimite(item.plano);
+const relacao=qtd+"/"+limite;
+setCellValue(item.row,item.table,"Qtd. na semana",relacao);
+
+const st=getStatusCell(item.row,item.table);
+
+if(qtd<=limite){
+ setCellValue(item.row,item.table,"Valor aula extra","");
+ if(st){
+   st.innerText="Dentro do plano contratado — "+relacao+" aulas na semana";
+   st.className="limit-ok";
+ }
+}else{
+ item.row.classList.add("limit-alert-row");
+ if(!getCellValue(item.row,item.table,"Valor aula extra"))setCellValue(item.row,item.table,"Valor aula extra","10");
+ if(st){
+   st.innerText="AULA EXTRA — ultrapassou o plano semanal — "+relacao;
+   st.className="limit-stop";
+ }
+}
+});
+}
+
+function valorRepassePlataforma(plataforma){
+plataforma=(plataforma||"").toLowerCase();
+if(plataforma.includes("totalpass"))return VALOR_REPASSE_TOTALPASS;
+if(plataforma.includes("gympass") || plataforma.includes("wellhub") || plataforma.includes("hub"))return VALOR_REPASSE_GYMPASS;
+return 0;
+}
+
+function ordinalCheckin(n){ return n+"º check-in"; }
+
+function updateGymCounts(){
+const allGymRows=[];
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+const table=document.getElementById("plataformas_unica");
+if(!table)return;
+
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome");
+const professor=getCellValue(row,table,"Professor");
+const plataforma=getCellValue(row,table,"Plataforma");
+const check=getCellValue(row,table,"Check-in OK?");
+const st=getStatusCell(row,table);
+
+if(data && nome && professor && plataforma && check==="OK"){
+ allGymRows.push({table,row,data,hora,nome,professor,plataforma,mes:data.substring(0,7)});
+}else{
+ setCellValue(row,table,"Qtd. no mês","");
+ setCellValue(row,table,"Valor repasse","");
+ if(st){
+  if(data || nome || professor || plataforma || check){
+   st.innerText="Preencha data, aluno, professor, plataforma e Check-in OK";
+   st.className="limit-stop";
+  }else{
+   st.innerText="";
+   st.className="statusMes";
+  }
+ }
+}
+});
+
+/* Conta por aluno no mês, independente do professor */
+allGymRows.sort((a,b)=>{
+const ka=a.nome+"|"+a.mes;
+const kb=b.nome+"|"+b.mes;
+if(ka!==kb)return ka.localeCompare(kb);
+return ((a.data||"")+" "+(a.hora||"")).localeCompare((b.data||"")+" "+(b.hora||""));
+});
+
+const counts={};
+allGymRows.forEach(item=>{
+const key=item.nome+"|"+item.mes;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+setCellValue(item.row,item.table,"Qtd. no mês",qtd);
+
+const st=getStatusCell(item.row,item.table);
+const valor=valorRepassePlataforma(item.plataforma);
+
+/* Até o 12º check-in computa. Do 13º em diante não soma. */
+if(qtd<=LIMITE_AULAS_MES){
+ setCellValue(item.row,item.table,"Valor repasse",valor.toFixed(2));
+ if(st){st.innerText="Contabiliza — "+qtd+"/12 no mês";st.className="limit-ok";}
+ if(totaisProfessores.hasOwnProperty(item.professor))totaisProfessores[item.professor]+=valor;
+}else{
+ setCellValue(item.row,item.table,"Valor repasse",ordinalCheckin(qtd));
+ if(st){st.innerText="Acima do limite mensal — "+ordinalCheckin(qtd)+" — não computa repasse";st.className="limit-stop";}
+}
+});
+
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalPlataforma_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+function updateAvulsasAutomaticas(){
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+document.querySelectorAll("table").forEach(table=>{
+const id=table.id || "";
+const isAvulsa=id.includes("aulas_avulsas");
+if(!isAvulsa)return;
+
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome do aluno");
+const profAula=getCellValue(row,table,"Professor da aula");
+let ehAluno=getCellValue(row,table,"É aluno da arena?");
+let profContratado=getCellValue(row,table,"Professor contratado");
+const st=getStatusCell(row,table);
+
+row.classList.remove("limit-alert-row");
+
+/* Identifica automaticamente se o nome está no cadastro de mensalistas */
+const profAuto = nome ? getProfessorContratadoAluno(nome) : "";
+if(nome && profAuto){
+  profContratado = profAuto;
+  setCellValue(row,table,"Professor contratado",profAuto);
+  if(!ehAluno){
+    ehAluno = "Sim";
+    setCellValue(row,table,"É aluno da arena?","Sim");
+  }
+}
+
+/* Se não achou no cadastro e a pessoa marcou que não é aluno */
+if(nome && ehAluno==="Não"){
+  setCellValue(row,table,"Professor contratado","");
+}
+
+if(data && hora && nome && profAula){
+
+  if(ehAluno==="Sim"){
+    /* Aluno cadastrado ou marcado como aluno: valor R$10 quando fizer aula avulsa */
+    setCellValue(row,table,"Valor","10.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      if(profContratado && profContratado!==profAula){
+        st.innerText=`ALUNO CADASTRADO — Professor contratado: ${profContratado} / Aula com: ${profAula} — R$ 10,00`;
+        st.className="limit-stop";
+      }else if(profContratado && profContratado===profAula){
+        st.innerText=`ALUNO CADASTRADO — Aula avulsa no próprio professor — R$ 10,00`;
+        st.className="limit-ok";
+      }else{
+        st.innerText="ALUNO DA ARENA — R$ 10,00";
+        st.className="limit-ok";
+      }
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=10;
+
+  }else if(ehAluno==="Não"){
+    /* Não aluno: valor R$20 */
+    setCellValue(row,table,"Valor","20.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      st.innerText=`NÃO ALUNO — Aula avulsa R$ 20,00`;
+      st.className="limit-stop";
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=20;
+
+  }else{
+    setCellValue(row,table,"Valor","");
+    if(st){
+      st.innerText="Selecione se é aluno da arena";
+      st.className="limit-stop";
+    }
+  }
+
+}else{
+  setCellValue(row,table,"Valor","");
+  if(st){
+    st.innerText="";
+    st.className="statusMes";
+  }
+}
+});
+});
+
+/* Cria/atualiza resumo das avulsas por professor */
+let resumo=document.getElementById("resumoAvulsas");
+if(!resumo){
+  const bloco=document.createElement("div");
+  bloco.className="box";
+  bloco.innerHTML=`<h2>Resumo de aulas avulsas por professor</h2>
+  <table id="resumoAvulsas"><thead><tr><th>Professor</th><th>Total de avulsas</th></tr></thead>
+  <tbody>
+  <tr><td>JP</td><td id="totalAvulsa_JP">R$ 0,00</td></tr>
+  <tr><td>Cavaco</td><td id="totalAvulsa_Cavaco">R$ 0,00</td></tr>
+  <tr><td>Gustavo</td><td id="totalAvulsa_Gustavo">R$ 0,00</td></tr>
+  </tbody></table>`;
+  const content=document.getElementById("content");
+  if(content && content.parentNode) content.parentNode.insertBefore(bloco, content);
+}
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalAvulsa_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoPresencaExtras(){
+const totais={JP:0,Cavaco:0,Gustavo:0};
+const table=document.getElementById("presenca_mensalistas_unica");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const profAula=getCellValue(row,table,"Professor da aula");
+const valor=parseFloat(String(getCellValue(row,table,"Valor aula extra")||"0").replace(",","."));
+if(totais.hasOwnProperty(profAula) && valor>0){
+  totais[profAula]+=valor;
+}
+});
+}
+Object.keys(totais).forEach(p=>{
+const el=document.getElementById("totalPresencaExtra_"+p);
+if(el)el.textContent=totais[p].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoMensalistas(){
+const totais={JP:0,Cavaco:0,Gustavo:0,NaoMensalista:0};
+const grupos={JP:[],Cavaco:[],Gustavo:[],NaoMensalista:[]};
+let totalGeral=0;
+const hoje=hojeISO();
+
+const table=document.getElementById("mensalistas_unico");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const nome=getCellValue(row,table,"Nome do aluno");
+const plano=getCellValue(row,table,"Plano contratado");
+const prof=getCellValue(row,table,"Professor");
+let vencimento=getCellValue(row,table,"Vencimento");
+const pago=String(getCellValue(row,table,"Pago?") || "").trim();
+let valorTexto=getCellValue(row,table,"Valor mensalidade");
+let valor=parseFloat(String(valorTexto || "0").replace(",","."));
+
+/* calcula vencimento automaticamente */
+const dataCad=getCellValue(row,table,"Data cadastro");
+if(dataCad && !vencimento){
+ setCellValue(row,table,"Vencimento",addOneMonth(dataCad));
+ vencimento=getCellValue(row,table,"Vencimento");
+}
+
+/* Não mensalista sempre fica zerado */
+if(plano==="Não mensalista"){
+ valor=0;
+ setCellValue(row,table,"Valor mensalidade","0.00");
+}
+
+/* Valor automático para plano 4x */
+if(plano==="4x na semana" && (!valor || valor===0)){
+ valor=140;
+ setCellValue(row,table,"Valor mensalidade","140.00");
+}
+
+/* limpa marcação vermelha */
+Array.from(row.children).forEach(td=>td.classList.remove("pendente-mensalidade"));
+
+/* Vermelho no dia do vencimento ou após, quando Pago? NÃO for Sim */
+const estaVencido = nome && plano!=="Não mensalista" && plano!=="Aluno" && vencimento && String(vencimento).slice(0,10) <= hoje;
+const pendente = estaVencido && pago !== "Sim";
+
+if(pendente){
+ const ths=headers(table);
+ const idxVenc=ths.indexOf("Vencimento");
+ const idxNome=ths.indexOf("Nome do aluno");
+ const idxValor=ths.indexOf("Valor mensalidade");
+
+ if(idxVenc>=0)row.children[idxVenc].classList.add("pendente-mensalidade");
+ if(idxNome>=0)row.children[idxNome].classList.add("pendente-mensalidade");
+ if(idxValor>=0)row.children[idxValor].classList.add("pendente-mensalidade");
+}
+
+/* agrupamento visual */
+if(nome){
+ if(plano==="Não mensalista" || plano==="Aluno"){
+   grupos.NaoMensalista.push(nome);
+ }else if(grupos.hasOwnProperty(prof)){
+   grupos[prof].push(nome);
+ }
+}
+
+/* REGRA PRINCIPAL:
+   O valor só soma no total geral e no resumo do professor se Pago? = Sim.
+   Se Pago? = Não, vazio, ou qualquer outra coisa, NÃO soma. */
+/* Só soma mensalidade se Pago? estiver exatamente como Sim */
+if(String(pago).trim() === "Sim" && !isNaN(valor) && valor > 0 && plano !== "Não mensalista" && plano !== "Aluno"){
+ totalGeral += valor;
+ if(totais.hasOwnProperty(prof)){
+  totais[prof] += valor;
+ }
+}
+});
+
+const totalCell=table.querySelector(".totalValue");
+if(totalCell){
+ totalCell.textContent=totalGeral.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+}
+
+/* Atualiza resumo por professor */
+["JP","Cavaco","Gustavo"].forEach(prof=>{
+const el=document.getElementById("totalMensalista_"+prof);
+if(el)el.textContent=totais[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+
+const elNao=document.getElementById("totalMensalista_NaoMensalista");
+if(elNao)elNao.textContent=totais.NaoMensalista.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+
+Object.keys(grupos).forEach(grupo=>{
+const el=document.getElementById("grupo_"+grupo);
+if(el){
+ el.textContent=grupos[grupo].length ? grupos[grupo].join(", ") : "";
+}
+});
+}
+
+function updatePresencaMensalistas(){
+let rowsPlano=[];
+const table=document.getElementById("presenca_mensalistas_unica");
+if(!table)return;
+
+/* Primeiro, separa: mensalista dentro do plano, extra, aluno avulso e não aluno */
+table.querySelectorAll("tbody tr").forEach(row=>{
+row.classList.remove("limit-alert-row");
+
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+let nome=getCellValue(row,table,"Nome do aluno");
+let tipo=getCellValue(row,table,"Tipo");
+const profAula=getCellValue(row,table,"Professor da aula");
+
+if(nome==="none"||nome==="undefined")nome="";
+
+let dados=nome?getDadosMensalista(nome):{professor:"",plano:""};
+let profContratado=getCellValue(row,table,"Professor contratado") || dados.professor;
+let plano=getCellValue(row,table,"Plano contratado") || dados.plano;
+
+if(nome && (dados.professor || dados.plano)){
+ if(!tipo){tipo="Aluno";setCellValue(row,table,"Tipo","Aluno");}
+ if(profContratado)setCellValue(row,table,"Professor contratado",profContratado);
+ if(plano)setCellValue(row,table,"Plano contratado",plano);
+}
+
+const st=getStatusCell(row,table);
+
+if(data && nome && profAula){
+
+ if(tipo==="Não aluno"){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   setCellValue(row,table,"Valor aula extra","20");
+   if(st){st.innerText="NÃO ALUNO — aula avulsa R$ 20,00";st.className="limit-stop";}
+   return;
+ }
+
+ if(tipo==="Aluno" && (!plano || !profContratado)){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+   if(st){st.innerText="ALUNO / PLATAFORMA — aula avulsa";st.className="limit-ok";}
+   return;
+ }
+
+ if(tipo==="Aluno" && plano && profContratado){
+   /* Se for professor diferente do contratado, vira aula extra e NÃO conta no plano semanal */
+   if(profContratado && profAula && profContratado!==profAula){
+     row.classList.add("limit-alert-row");
+     setCellValue(row,table,"Qtd. na semana","Extra");
+     if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+
+     if(st){
+       st.innerText=`AULA EXTRA — professor diferente do contratado (${profContratado} → ${profAula})`;
+       st.className="limit-stop";
+     }
+   }else{
+     /* Só entra na contagem semanal se for com o professor contratado */
+     rowsPlano.push({table,row,data,hora,nome,plano,profAula,profContratado,week:getWeekKey(data)});
+   }
+   return;
+ }
+
+ if(!tipo){
+   setCellValue(row,table,"Qtd. na semana","");
+   setCellValue(row,table,"Valor aula extra","");
+   if(st){st.innerText="Selecione se é Aluno ou Não aluno";st.className="limit-stop";}
+   return;
+ }
+
+}else{
+ setCellValue(row,table,"Qtd. na semana","");
+ setCellValue(row,table,"Valor aula extra","");
+ if(st){
+  if(data&&!nome){st.innerText="Selecione o nome do aluno para contar";st.className="limit-stop";}
+  else if(nome&&!data){st.innerText="Informe a data da aula";st.className="limit-stop";}
+  else if(nome&&!profAula){st.innerText="Selecione o professor da aula";st.className="limit-stop";}
+  else{st.innerText="";st.className="statusMes";}
+ }
+}
+});
+
+/* Conta somente as aulas feitas com o professor contratado */
+rowsPlano.sort((a,b)=>{
+const ka=a.nome+"|"+a.week;
+const kb=b.nome+"|"+b.week;
+if(ka!==kb)return ka.localeCompare(kb);
+const da=(a.data||"")+" "+(a.hora||"");
+const db=(b.data||"")+" "+(b.hora||"");
+return da.localeCompare(db);
+});
+
+const counts={};
+rowsPlano.forEach(item=>{
+const key=item.nome+"|"+item.week;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+const limite=planoLimite(item.plano);
+const relacao=qtd+"/"+limite;
+setCellValue(item.row,item.table,"Qtd. na semana",relacao);
+
+const st=getStatusCell(item.row,item.table);
+
+if(qtd<=limite){
+ setCellValue(item.row,item.table,"Valor aula extra","");
+ if(st){
+   st.innerText="Dentro do plano contratado — "+relacao+" aulas na semana";
+   st.className="limit-ok";
+ }
+}else{
+ item.row.classList.add("limit-alert-row");
+ if(!getCellValue(item.row,item.table,"Valor aula extra"))setCellValue(item.row,item.table,"Valor aula extra","10");
+ if(st){
+   st.innerText="AULA EXTRA — ultrapassou o plano semanal — "+relacao;
+   st.className="limit-stop";
+ }
+}
+});
+}
+
+function updateGymCounts(){
+const allGymRows=[];
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+document.querySelectorAll("table[data-gym='true']").forEach(table=>{
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome");
+const professor=getCellValue(row,table,"Professor");
+const plataforma=getCellValue(row,table,"Plataforma");
+const check=getCellValue(row,table,"Check-in OK?");
+const st=getStatusCell(row,table);
+
+if(data&&nome&&professor&&plataforma&&check==="OK"){
+allGymRows.push({table,row,data,hora,nome,professor,plataforma,mes:data.substring(0,7)});
+}else{
+setCellValue(row,table,"Qtd. no mês","");
+setCellValue(row,table,"Valor repasse","");
+if(st){
+ if((data||nome||professor||plataforma) && check!=="OK"){
+   st.innerText="Preencha aluno, professor, plataforma e Check-in OK";
+   st.className="limit-stop";
+ }else{
+   st.innerText="";
+   st.className="statusMes";
+ }
+}
+}
+});
+});
+
+allGymRows.sort((a,b)=>{
+const ka=a.nome+"|"+a.mes;
+const kb=b.nome+"|"+b.mes;
+if(ka!==kb)return ka.localeCompare(kb);
+const da=(a.data||"")+" "+(a.hora||"");
+const db=(b.data||"")+" "+(b.hora||"");
+return da.localeCompare(db);
+});
+
+const counts={};
+allGymRows.forEach(item=>{
+const key=item.nome+"|"+item.mes;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+setCellValue(item.row,item.table,"Qtd. no mês",qtd);
+
+const st=getStatusCell(item.row,item.table);
+const valor=valorRepassePlataforma(item.plataforma);
+
+if(qtd<=LIMITE_AULAS_MES){
+setCellValue(item.row,item.table,"Valor repasse",valor.toFixed(2));
+if(st){st.innerText="Contabiliza — "+qtd+"/12 no mês";st.className="limit-ok";}
+if(totaisProfessores.hasOwnProperty(item.professor))totaisProfessores[item.professor]+=valor;
+}else{
+setCellValue(item.row,item.table,"Valor repasse",ordinalCheckin(qtd));
+if(st){st.innerText="Acima do limite mensal — "+ordinalCheckin(qtd)+" — não computa repasse";st.className="limit-stop";}
+}
+});
+
+/* cria/atualiza resumo de plataformas por professor */
+let resumo=document.getElementById("resumoPlataformas");
+if(!resumo){
+ const box=document.createElement("div");
+ box.className="box";
+ box.innerHTML=`<h2>Resumo de plataformas por professor</h2>
+ <table id="resumoPlataformas"><thead><tr><th>Professor</th><th>Total de repasse</th></tr></thead>
+ <tbody>
+ <tr><td>JP</td><td id="totalPlataforma_JP">R$ 0,00</td></tr>
+ <tr><td>Cavaco</td><td id="totalPlataforma_Cavaco">R$ 0,00</td></tr>
+ <tr><td>Gustavo</td><td id="totalPlataforma_Gustavo">R$ 0,00</td></tr>
+ </tbody></table>`;
+ const content=document.getElementById("content");
+ if(content && content.parentNode) content.parentNode.insertBefore(box, content);
+}
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalPlataforma_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+function updateAvulsasAutomaticas(){
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+document.querySelectorAll("table").forEach(table=>{
+const id=table.id || "";
+const isAvulsa=id.includes("aulas_avulsas");
+if(!isAvulsa)return;
+
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome do aluno");
+const profAula=getCellValue(row,table,"Professor da aula");
+let ehAluno=getCellValue(row,table,"É aluno da arena?");
+let profContratado=getCellValue(row,table,"Professor contratado");
+const st=getStatusCell(row,table);
+
+row.classList.remove("limit-alert-row");
+
+/* Identifica automaticamente se o nome está no cadastro de mensalistas */
+const profAuto = nome ? getProfessorContratadoAluno(nome) : "";
+if(nome && profAuto){
+  profContratado = profAuto;
+  setCellValue(row,table,"Professor contratado",profAuto);
+  if(!ehAluno){
+    ehAluno = "Sim";
+    setCellValue(row,table,"É aluno da arena?","Sim");
+  }
+}
+
+/* Se não achou no cadastro e a pessoa marcou que não é aluno */
+if(nome && ehAluno==="Não"){
+  setCellValue(row,table,"Professor contratado","");
+}
+
+if(data && hora && nome && profAula){
+
+  if(ehAluno==="Sim"){
+    /* Aluno cadastrado ou marcado como aluno: valor R$10 quando fizer aula avulsa */
+    setCellValue(row,table,"Valor","10.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      if(profContratado && profContratado!==profAula){
+        st.innerText=`ALUNO CADASTRADO — Professor contratado: ${profContratado} / Aula com: ${profAula} — R$ 10,00`;
+        st.className="limit-stop";
+      }else if(profContratado && profContratado===profAula){
+        st.innerText=`ALUNO CADASTRADO — Aula avulsa no próprio professor — R$ 10,00`;
+        st.className="limit-ok";
+      }else{
+        st.innerText="ALUNO DA ARENA — R$ 10,00";
+        st.className="limit-ok";
+      }
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=10;
+
+  }else if(ehAluno==="Não"){
+    /* Não aluno: valor R$20 */
+    setCellValue(row,table,"Valor","20.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      st.innerText=`NÃO ALUNO — Aula avulsa R$ 20,00`;
+      st.className="limit-stop";
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=20;
+
+  }else{
+    setCellValue(row,table,"Valor","");
+    if(st){
+      st.innerText="Selecione se é aluno da arena";
+      st.className="limit-stop";
+    }
+  }
+
+}else{
+  setCellValue(row,table,"Valor","");
+  if(st){
+    st.innerText="";
+    st.className="statusMes";
+  }
+}
+});
+});
+
+/* Cria/atualiza resumo das avulsas por professor */
+let resumo=document.getElementById("resumoAvulsas");
+if(!resumo){
+  const bloco=document.createElement("div");
+  bloco.className="box";
+  bloco.innerHTML=`<h2>Resumo de aulas avulsas por professor</h2>
+  <table id="resumoAvulsas"><thead><tr><th>Professor</th><th>Total de avulsas</th></tr></thead>
+  <tbody>
+  <tr><td>JP</td><td id="totalAvulsa_JP">R$ 0,00</td></tr>
+  <tr><td>Cavaco</td><td id="totalAvulsa_Cavaco">R$ 0,00</td></tr>
+  <tr><td>Gustavo</td><td id="totalAvulsa_Gustavo">R$ 0,00</td></tr>
+  </tbody></table>`;
+  const content=document.getElementById("content");
+  if(content && content.parentNode) content.parentNode.insertBefore(bloco, content);
+}
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalAvulsa_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoPresencaExtras(){
+const totais={JP:0,Cavaco:0,Gustavo:0};
+const table=document.getElementById("presenca_mensalistas_unica");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const profAula=getCellValue(row,table,"Professor da aula");
+const valor=parseFloat(String(getCellValue(row,table,"Valor aula extra")||"0").replace(",","."));
+if(totais.hasOwnProperty(profAula) && valor>0){
+  totais[profAula]+=valor;
+}
+});
+}
+Object.keys(totais).forEach(p=>{
+const el=document.getElementById("totalPresencaExtra_"+p);
+if(el)el.textContent=totais[p].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoMensalistas(){
+const totais={JP:0,Cavaco:0,Gustavo:0,NaoMensalista:0};
+const grupos={JP:[],Cavaco:[],Gustavo:[],NaoMensalista:[]};
+let totalGeral=0;
+const hoje=hojeISO();
+
+const table=document.getElementById("mensalistas_unico");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const nome=getCellValue(row,table,"Nome do aluno");
+const plano=getCellValue(row,table,"Plano contratado");
+const prof=getCellValue(row,table,"Professor");
+let vencimento=getCellValue(row,table,"Vencimento");
+const pago=getCellValue(row,table,"Pago?");
+let valorTexto=getCellValue(row,table,"Valor mensalidade");
+let valor=parseFloat(String(valorTexto || "0").replace(",","."));
+
+/* calcula vencimento automaticamente se tiver data de cadastro */
+const dataCad=getCellValue(row,table,"Data cadastro");
+if(dataCad && !vencimento){
+ setCellValue(row,table,"Vencimento",addOneMonth(dataCad));
+ vencimento=getCellValue(row,table,"Vencimento");
+}
+
+/* não mensalista sempre fica zerado */
+if(plano==="Não mensalista"){
+ valor=0;
+ setCellValue(row,table,"Valor mensalidade","0.00");
+}
+
+/* limpa marcação vermelha sempre que recalcular */
+Array.from(row.children).forEach(td=>td.classList.remove("pendente-mensalidade"));
+
+/* Regra de pendência: chegou/ultrapassou vencimento e Pago? está Não */
+const estaVencido = nome && plano!=="Não mensalista" && plano!=="Aluno" && vencimento && String(vencimento).slice(0,10) <= hoje;
+const pendente = estaVencido && pago!=="Sim";
+
+/* Se está pendente, pinta NOME e VALOR de vermelho */
+if(pendente){
+ const ths=headers(table);
+ const idxVenc=ths.indexOf("Vencimento");
+ const idxNome=ths.indexOf("Nome do aluno");
+ const idxValor=ths.indexOf("Valor mensalidade");
+
+ if(idxVenc>=0)row.children[idxVenc].classList.add("pendente-mensalidade");
+ if(idxNome>=0)row.children[idxNome].classList.add("pendente-mensalidade");
+ if(idxValor>=0)row.children[idxValor].classList.add("pendente-mensalidade");
+}
+
+/* agrupamento de nomes */
+if(nome){
+ if(plano==="Não mensalista" || plano==="Aluno"){
+   grupos.NaoMensalista.push(nome);
+ }else if(grupos.hasOwnProperty(prof)){
+   grupos[prof].push(nome);
+ }
+}
+
+/* Só computa para o professor se estiver Pago? = Sim.
+   Se estiver Não, mesmo vencido ou não, não soma. */
+/* SOMENTE mensalidades com Pago? = Sim entram no resumo dos professores */
+if(String(pago).trim()==="Sim" && !isNaN(valor) && valor>0 && plano!=="Não mensalista" && plano!=="Aluno"){
+ totalGeral+=valor;
+
+ if(totais.hasOwnProperty(prof)){
+  totais[prof]+=valor;
+ }
+}
+});
+
+const totalCell=table.querySelector(".totalValue");
+if(totalCell){
+ totalCell.textContent=totalGeral.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+}
+
+["JP","Cavaco","Gustavo"].forEach(prof=>{
+const el=document.getElementById("totalMensalista_"+prof);
+if(el)el.textContent=totais[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+
+const elNao=document.getElementById("totalMensalista_NaoMensalista");
+if(elNao)elNao.textContent=totais.NaoMensalista.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+
+Object.keys(grupos).forEach(grupo=>{
+const el=document.getElementById("grupo_"+grupo);
+if(el){
+ el.textContent=grupos[grupo].length ? grupos[grupo].join(", ") : "";
+}
+});
+}
+
+function updatePresencaMensalistas(){
+let rowsPlano=[];
+const table=document.getElementById("presenca_mensalistas_unica");
+if(!table)return;
+
+/* Primeiro, separa: mensalista dentro do plano, extra, aluno avulso e não aluno */
+table.querySelectorAll("tbody tr").forEach(row=>{
+row.classList.remove("limit-alert-row");
+
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+let nome=getCellValue(row,table,"Nome do aluno");
+let tipo=getCellValue(row,table,"Tipo");
+const profAula=getCellValue(row,table,"Professor da aula");
+
+if(nome==="none"||nome==="undefined")nome="";
+
+let dados=nome?getDadosMensalista(nome):{professor:"",plano:""};
+let profContratado=getCellValue(row,table,"Professor contratado") || dados.professor;
+let plano=getCellValue(row,table,"Plano contratado") || dados.plano;
+
+if(nome && (dados.professor || dados.plano)){
+ if(!tipo){tipo="Aluno";setCellValue(row,table,"Tipo","Aluno");}
+ if(profContratado)setCellValue(row,table,"Professor contratado",profContratado);
+ if(plano)setCellValue(row,table,"Plano contratado",plano);
+}
+
+const st=getStatusCell(row,table);
+
+if(data && nome && profAula){
+
+ if(tipo==="Não aluno"){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   setCellValue(row,table,"Valor aula extra","20");
+   if(st){st.innerText="NÃO ALUNO — aula avulsa R$ 20,00";st.className="limit-stop";}
+   return;
+ }
+
+ if(tipo==="Aluno" && (!plano || !profContratado)){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+   if(st){st.innerText="ALUNO / PLATAFORMA — aula avulsa";st.className="limit-ok";}
+   return;
+ }
+
+ if(tipo==="Aluno" && plano && profContratado){
+   /* Se for professor diferente do contratado, vira aula extra e NÃO conta no plano semanal */
+   if(profContratado && profAula && profContratado!==profAula){
+     row.classList.add("limit-alert-row");
+     setCellValue(row,table,"Qtd. na semana","Extra");
+     if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+
+     if(st){
+       st.innerText=`AULA EXTRA — professor diferente do contratado (${profContratado} → ${profAula})`;
+       st.className="limit-stop";
+     }
+   }else{
+     /* Só entra na contagem semanal se for com o professor contratado */
+     rowsPlano.push({table,row,data,hora,nome,plano,profAula,profContratado,week:getWeekKey(data)});
+   }
+   return;
+ }
+
+ if(!tipo){
+   setCellValue(row,table,"Qtd. na semana","");
+   setCellValue(row,table,"Valor aula extra","");
+   if(st){st.innerText="Selecione se é Aluno ou Não aluno";st.className="limit-stop";}
+   return;
+ }
+
+}else{
+ setCellValue(row,table,"Qtd. na semana","");
+ setCellValue(row,table,"Valor aula extra","");
+ if(st){
+  if(data&&!nome){st.innerText="Selecione o nome do aluno para contar";st.className="limit-stop";}
+  else if(nome&&!data){st.innerText="Informe a data da aula";st.className="limit-stop";}
+  else if(nome&&!profAula){st.innerText="Selecione o professor da aula";st.className="limit-stop";}
+  else{st.innerText="";st.className="statusMes";}
+ }
+}
+});
+
+/* Conta somente as aulas feitas com o professor contratado */
+rowsPlano.sort((a,b)=>{
+const ka=a.nome+"|"+a.week;
+const kb=b.nome+"|"+b.week;
+if(ka!==kb)return ka.localeCompare(kb);
+const da=(a.data||"")+" "+(a.hora||"");
+const db=(b.data||"")+" "+(b.hora||"");
+return da.localeCompare(db);
+});
+
+const counts={};
+rowsPlano.forEach(item=>{
+const key=item.nome+"|"+item.week;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+const limite=planoLimite(item.plano);
+const relacao=qtd+"/"+limite;
+setCellValue(item.row,item.table,"Qtd. na semana",relacao);
+
+const st=getStatusCell(item.row,item.table);
+
+if(qtd<=limite){
+ setCellValue(item.row,item.table,"Valor aula extra","");
+ if(st){
+   st.innerText="Dentro do plano contratado — "+relacao+" aulas na semana";
+   st.className="limit-ok";
+ }
+}else{
+ item.row.classList.add("limit-alert-row");
+ if(!getCellValue(item.row,item.table,"Valor aula extra"))setCellValue(item.row,item.table,"Valor aula extra","10");
+ if(st){
+   st.innerText="AULA EXTRA — ultrapassou o plano semanal — "+relacao;
+   st.className="limit-stop";
+ }
+}
+});
+}
+
+function updateGymCounts(){
+const allGymRows=[];
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+document.querySelectorAll("table[data-gym='true']").forEach(table=>{
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome");
+const professor=getCellValue(row,table,"Professor");
+const plataforma=getCellValue(row,table,"Plataforma");
+const check=getCellValue(row,table,"Check-in OK?");
+const st=getStatusCell(row,table);
+
+if(data&&nome&&professor&&plataforma&&check==="OK"){
+allGymRows.push({table,row,data,hora,nome,professor,plataforma,mes:data.substring(0,7)});
+}else{
+setCellValue(row,table,"Qtd. no mês","");
+setCellValue(row,table,"Valor repasse","");
+if(st){
+ if((data||nome||professor||plataforma) && check!=="OK"){
+   st.innerText="Preencha aluno, professor, plataforma e Check-in OK";
+   st.className="limit-stop";
+ }else{
+   st.innerText="";
+   st.className="statusMes";
+ }
+}
+}
+});
+});
+
+allGymRows.sort((a,b)=>{
+const ka=a.nome+"|"+a.mes;
+const kb=b.nome+"|"+b.mes;
+if(ka!==kb)return ka.localeCompare(kb);
+const da=(a.data||"")+" "+(a.hora||"");
+const db=(b.data||"")+" "+(b.hora||"");
+return da.localeCompare(db);
+});
+
+const counts={};
+allGymRows.forEach(item=>{
+const key=item.nome+"|"+item.mes;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+setCellValue(item.row,item.table,"Qtd. no mês",qtd);
+
+const st=getStatusCell(item.row,item.table);
+const valor=valorRepassePlataforma(item.plataforma);
+
+if(qtd<=LIMITE_AULAS_MES){
+setCellValue(item.row,item.table,"Valor repasse",valor.toFixed(2));
+if(st){st.innerText="Contabiliza — "+qtd+"/12 no mês";st.className="limit-ok";}
+if(totaisProfessores.hasOwnProperty(item.professor))totaisProfessores[item.professor]+=valor;
+}else{
+setCellValue(item.row,item.table,"Valor repasse",ordinalCheckin(qtd));
+if(st){st.innerText="Acima do limite mensal — "+ordinalCheckin(qtd)+" — não computa repasse";st.className="limit-stop";}
+}
+});
+
+/* cria/atualiza resumo de plataformas por professor */
+let resumo=document.getElementById("resumoPlataformas");
+if(!resumo){
+ const box=document.createElement("div");
+ box.className="box";
+ box.innerHTML=`<h2>Resumo de plataformas por professor</h2>
+ <table id="resumoPlataformas"><thead><tr><th>Professor</th><th>Total de repasse</th></tr></thead>
+ <tbody>
+ <tr><td>JP</td><td id="totalPlataforma_JP">R$ 0,00</td></tr>
+ <tr><td>Cavaco</td><td id="totalPlataforma_Cavaco">R$ 0,00</td></tr>
+ <tr><td>Gustavo</td><td id="totalPlataforma_Gustavo">R$ 0,00</td></tr>
+ </tbody></table>`;
+ const content=document.getElementById("content");
+ if(content && content.parentNode) content.parentNode.insertBefore(box, content);
+}
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalPlataforma_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+function updateAvulsasAutomaticas(){
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+document.querySelectorAll("table").forEach(table=>{
+const id=table.id || "";
+const isAvulsa=id.includes("aulas_avulsas");
+if(!isAvulsa)return;
+
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome do aluno");
+const profAula=getCellValue(row,table,"Professor da aula");
+let ehAluno=getCellValue(row,table,"É aluno da arena?");
+let profContratado=getCellValue(row,table,"Professor contratado");
+const st=getStatusCell(row,table);
+
+row.classList.remove("limit-alert-row");
+
+/* Identifica automaticamente se o nome está no cadastro de mensalistas */
+const profAuto = nome ? getProfessorContratadoAluno(nome) : "";
+if(nome && profAuto){
+  profContratado = profAuto;
+  setCellValue(row,table,"Professor contratado",profAuto);
+  if(!ehAluno){
+    ehAluno = "Sim";
+    setCellValue(row,table,"É aluno da arena?","Sim");
+  }
+}
+
+/* Se não achou no cadastro e a pessoa marcou que não é aluno */
+if(nome && ehAluno==="Não"){
+  setCellValue(row,table,"Professor contratado","");
+}
+
+if(data && hora && nome && profAula){
+
+  if(ehAluno==="Sim"){
+    /* Aluno cadastrado ou marcado como aluno: valor R$10 quando fizer aula avulsa */
+    setCellValue(row,table,"Valor","10.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      if(profContratado && profContratado!==profAula){
+        st.innerText=`ALUNO CADASTRADO — Professor contratado: ${profContratado} / Aula com: ${profAula} — R$ 10,00`;
+        st.className="limit-stop";
+      }else if(profContratado && profContratado===profAula){
+        st.innerText=`ALUNO CADASTRADO — Aula avulsa no próprio professor — R$ 10,00`;
+        st.className="limit-ok";
+      }else{
+        st.innerText="ALUNO DA ARENA — R$ 10,00";
+        st.className="limit-ok";
+      }
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=10;
+
+  }else if(ehAluno==="Não"){
+    /* Não aluno: valor R$20 */
+    setCellValue(row,table,"Valor","20.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      st.innerText=`NÃO ALUNO — Aula avulsa R$ 20,00`;
+      st.className="limit-stop";
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=20;
+
+  }else{
+    setCellValue(row,table,"Valor","");
+    if(st){
+      st.innerText="Selecione se é aluno da arena";
+      st.className="limit-stop";
+    }
+  }
+
+}else{
+  setCellValue(row,table,"Valor","");
+  if(st){
+    st.innerText="";
+    st.className="statusMes";
+  }
+}
+});
+});
+
+/* Cria/atualiza resumo das avulsas por professor */
+let resumo=document.getElementById("resumoAvulsas");
+if(!resumo){
+  const bloco=document.createElement("div");
+  bloco.className="box";
+  bloco.innerHTML=`<h2>Resumo de aulas avulsas por professor</h2>
+  <table id="resumoAvulsas"><thead><tr><th>Professor</th><th>Total de avulsas</th></tr></thead>
+  <tbody>
+  <tr><td>JP</td><td id="totalAvulsa_JP">R$ 0,00</td></tr>
+  <tr><td>Cavaco</td><td id="totalAvulsa_Cavaco">R$ 0,00</td></tr>
+  <tr><td>Gustavo</td><td id="totalAvulsa_Gustavo">R$ 0,00</td></tr>
+  </tbody></table>`;
+  const content=document.getElementById("content");
+  if(content && content.parentNode) content.parentNode.insertBefore(bloco, content);
+}
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalAvulsa_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoPresencaExtras(){
+const totais={JP:0,Cavaco:0,Gustavo:0};
+const table=document.getElementById("presenca_mensalistas_unica");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const profAula=getCellValue(row,table,"Professor da aula");
+const valor=parseFloat(String(getCellValue(row,table,"Valor aula extra")||"0").replace(",","."));
+if(totais.hasOwnProperty(profAula) && valor>0){
+  totais[profAula]+=valor;
+}
+});
+}
+Object.keys(totais).forEach(p=>{
+const el=document.getElementById("totalPresencaExtra_"+p);
+if(el)el.textContent=totais[p].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoMensalistas(){
+const totais={JP:0,Cavaco:0,Gustavo:0,NaoMensalista:0};
+const grupos={JP:[],Cavaco:[],Gustavo:[],NaoMensalista:[]};
+let totalGeral=0;
+const hoje=hojeISO();
+
+const table=document.getElementById("mensalistas_unico");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const nome=getCellValue(row,table,"Nome do aluno");
+const plano=getCellValue(row,table,"Plano contratado");
+const prof=getCellValue(row,table,"Professor");
+const vencimento=getCellValue(row,table,"Vencimento");
+const pago=getCellValue(row,table,"Pago?");
+let valorTexto=getCellValue(row,table,"Valor mensalidade");
+let valor=parseFloat(String(valorTexto || "0").replace(",","."));
+
+/* calcula vencimento se tiver data de cadastro e vencimento vazio */
+const dataCad=getCellValue(row,table,"Data cadastro");
+if(dataCad && !vencimento){
+ setCellValue(row,table,"Vencimento",addOneMonth(dataCad));
+}
+
+/* não mensalista sempre fica zerado */
+if(plano==="Não mensalista" || plano==="Aluno"){
+  valor=0;
+  setCellValue(row,table,"Valor mensalidade","0.00");
+}
+
+/* limpa marcações */
+Array.from(row.children).forEach(td=>td.classList.remove("pendente-mensalidade"));
+
+const vencAtual=getCellValue(row,table,"Vencimento");
+const pendente = nome && plano!=="Não mensalista" && plano!=="Aluno" && vencAtual && vencAtual<=hoje && pago!=="Sim";
+
+/* Se venceu e não pagou, destaca nome e valor, e não soma para o professor */
+if(pendente){
+ const ths=headers(table);
+ const idxVenc=ths.indexOf("Vencimento");
+ const idxNome=ths.indexOf("Nome do aluno");
+ const idxValor=ths.indexOf("Valor mensalidade");
+
+ if(idxVenc>=0)row.children[idxVenc].classList.add("pendente-mensalidade");
+ if(idxNome>=0)row.children[idxNome].classList.add("pendente-mensalidade");
+ if(idxValor>=0)row.children[idxValor].classList.add("pendente-mensalidade");
+}
+
+if(nome){
+  if(plano==="Não mensalista" || plano==="Aluno"){
+    grupos.NaoMensalista.push(nome);
+  }else if(grupos.hasOwnProperty(prof)){
+    grupos[prof].push(nome);
+  }
+}
+
+/* Só soma mensalidade paga */
+if(!pendente && pago==="Sim" && !isNaN(valor) && valor>0){
+ totalGeral+=valor;
+ if(totais.hasOwnProperty(prof)){
+  totais[prof]+=valor;
+ }
+}
+});
+
+const totalCell=table.querySelector(".totalValue");
+if(totalCell){
+ totalCell.textContent=totalGeral.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+}
+
+["JP","Cavaco","Gustavo"].forEach(prof=>{
+const el=document.getElementById("totalMensalista_"+prof);
+if(el)el.textContent=totais[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+
+const elNao=document.getElementById("totalMensalista_NaoMensalista");
+if(elNao)elNao.textContent=totais.NaoMensalista.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+
+Object.keys(grupos).forEach(grupo=>{
+const el=document.getElementById("grupo_"+grupo);
+if(el){
+ el.textContent=grupos[grupo].length ? grupos[grupo].join(", ") : "";
+}
+});
+}
+
+function updatePresencaMensalistas(){
+let rowsPlano=[];
+const table=document.getElementById("presenca_mensalistas_unica");
+if(!table)return;
+
+/* Primeiro, separa: mensalista dentro do plano, extra, aluno avulso e não aluno */
+table.querySelectorAll("tbody tr").forEach(row=>{
+row.classList.remove("limit-alert-row");
+
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+let nome=getCellValue(row,table,"Nome do aluno");
+let tipo=getCellValue(row,table,"Tipo");
+const profAula=getCellValue(row,table,"Professor da aula");
+
+if(nome==="none"||nome==="undefined")nome="";
+
+let dados=nome?getDadosMensalista(nome):{professor:"",plano:""};
+let profContratado=getCellValue(row,table,"Professor contratado") || dados.professor;
+let plano=getCellValue(row,table,"Plano contratado") || dados.plano;
+
+if(nome && (dados.professor || dados.plano)){
+ if(!tipo){tipo="Aluno";setCellValue(row,table,"Tipo","Aluno");}
+ if(profContratado)setCellValue(row,table,"Professor contratado",profContratado);
+ if(plano)setCellValue(row,table,"Plano contratado",plano);
+}
+
+const st=getStatusCell(row,table);
+
+if(data && nome && profAula){
+
+ if(tipo==="Não aluno"){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   setCellValue(row,table,"Valor aula extra","20");
+   if(st){st.innerText="NÃO ALUNO — aula avulsa R$ 20,00";st.className="limit-stop";}
+   return;
+ }
+
+ if(tipo==="Aluno" && (!plano || !profContratado)){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+   if(st){st.innerText="ALUNO / PLATAFORMA — aula avulsa";st.className="limit-ok";}
+   return;
+ }
+
+ if(tipo==="Aluno" && plano && profContratado){
+   /* Se for professor diferente do contratado, vira aula extra e NÃO conta no plano semanal */
+   if(profContratado && profAula && profContratado!==profAula){
+     row.classList.add("limit-alert-row");
+     setCellValue(row,table,"Qtd. na semana","Extra");
+     if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+
+     if(st){
+       st.innerText=`AULA EXTRA — professor diferente do contratado (${profContratado} → ${profAula})`;
+       st.className="limit-stop";
+     }
+   }else{
+     /* Só entra na contagem semanal se for com o professor contratado */
+     rowsPlano.push({table,row,data,hora,nome,plano,profAula,profContratado,week:getWeekKey(data)});
+   }
+   return;
+ }
+
+ if(!tipo){
+   setCellValue(row,table,"Qtd. na semana","");
+   setCellValue(row,table,"Valor aula extra","");
+   if(st){st.innerText="Selecione se é Aluno ou Não aluno";st.className="limit-stop";}
+   return;
+ }
+
+}else{
+ setCellValue(row,table,"Qtd. na semana","");
+ setCellValue(row,table,"Valor aula extra","");
+ if(st){
+  if(data&&!nome){st.innerText="Selecione o nome do aluno para contar";st.className="limit-stop";}
+  else if(nome&&!data){st.innerText="Informe a data da aula";st.className="limit-stop";}
+  else if(nome&&!profAula){st.innerText="Selecione o professor da aula";st.className="limit-stop";}
+  else{st.innerText="";st.className="statusMes";}
+ }
+}
+});
+
+/* Conta somente as aulas feitas com o professor contratado */
+rowsPlano.sort((a,b)=>{
+const ka=a.nome+"|"+a.week;
+const kb=b.nome+"|"+b.week;
+if(ka!==kb)return ka.localeCompare(kb);
+const da=(a.data||"")+" "+(a.hora||"");
+const db=(b.data||"")+" "+(b.hora||"");
+return da.localeCompare(db);
+});
+
+const counts={};
+rowsPlano.forEach(item=>{
+const key=item.nome+"|"+item.week;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+const limite=planoLimite(item.plano);
+const relacao=qtd+"/"+limite;
+setCellValue(item.row,item.table,"Qtd. na semana",relacao);
+
+const st=getStatusCell(item.row,item.table);
+
+if(qtd<=limite){
+ setCellValue(item.row,item.table,"Valor aula extra","");
+ if(st){
+   st.innerText="Dentro do plano contratado — "+relacao+" aulas na semana";
+   st.className="limit-ok";
+ }
+}else{
+ item.row.classList.add("limit-alert-row");
+ if(!getCellValue(item.row,item.table,"Valor aula extra"))setCellValue(item.row,item.table,"Valor aula extra","10");
+ if(st){
+   st.innerText="AULA EXTRA — ultrapassou o plano semanal — "+relacao;
+   st.className="limit-stop";
+ }
+}
+});
+}
+
+function updateGymCounts(){
+const allGymRows=[];
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+document.querySelectorAll("table[data-gym='true']").forEach(table=>{
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome");
+const professor=getCellValue(row,table,"Professor");
+const plataforma=getCellValue(row,table,"Plataforma");
+const check=getCellValue(row,table,"Check-in OK?");
+const st=getStatusCell(row,table);
+
+if(data&&nome&&professor&&plataforma&&check==="OK"){
+allGymRows.push({table,row,data,hora,nome,professor,plataforma,mes:data.substring(0,7)});
+}else{
+setCellValue(row,table,"Qtd. no mês","");
+setCellValue(row,table,"Valor repasse","");
+if(st){
+ if((data||nome||professor||plataforma) && check!=="OK"){
+   st.innerText="Preencha aluno, professor, plataforma e Check-in OK";
+   st.className="limit-stop";
+ }else{
+   st.innerText="";
+   st.className="statusMes";
+ }
+}
+}
+});
+});
+
+allGymRows.sort((a,b)=>{
+const ka=a.nome+"|"+a.mes;
+const kb=b.nome+"|"+b.mes;
+if(ka!==kb)return ka.localeCompare(kb);
+const da=(a.data||"")+" "+(a.hora||"");
+const db=(b.data||"")+" "+(b.hora||"");
+return da.localeCompare(db);
+});
+
+const counts={};
+allGymRows.forEach(item=>{
+const key=item.nome+"|"+item.mes;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+setCellValue(item.row,item.table,"Qtd. no mês",qtd);
+
+const st=getStatusCell(item.row,item.table);
+const valor=valorRepassePlataforma(item.plataforma);
+
+if(qtd<=LIMITE_AULAS_MES){
+setCellValue(item.row,item.table,"Valor repasse",valor.toFixed(2));
+if(st){st.innerText="Contabiliza — "+qtd+"/12 no mês";st.className="limit-ok";}
+if(totaisProfessores.hasOwnProperty(item.professor))totaisProfessores[item.professor]+=valor;
+}else{
+setCellValue(item.row,item.table,"Valor repasse",ordinalCheckin(qtd));
+if(st){st.innerText="Acima do limite mensal — "+ordinalCheckin(qtd)+" — não computa repasse";st.className="limit-stop";}
+}
+});
+
+/* cria/atualiza resumo de plataformas por professor */
+let resumo=document.getElementById("resumoPlataformas");
+if(!resumo){
+ const box=document.createElement("div");
+ box.className="box";
+ box.innerHTML=`<h2>Resumo de plataformas por professor</h2>
+ <table id="resumoPlataformas"><thead><tr><th>Professor</th><th>Total de repasse</th></tr></thead>
+ <tbody>
+ <tr><td>JP</td><td id="totalPlataforma_JP">R$ 0,00</td></tr>
+ <tr><td>Cavaco</td><td id="totalPlataforma_Cavaco">R$ 0,00</td></tr>
+ <tr><td>Gustavo</td><td id="totalPlataforma_Gustavo">R$ 0,00</td></tr>
+ </tbody></table>`;
+ const content=document.getElementById("content");
+ if(content && content.parentNode) content.parentNode.insertBefore(box, content);
+}
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalPlataforma_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+function updateAvulsasAutomaticas(){
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+document.querySelectorAll("table").forEach(table=>{
+const id=table.id || "";
+const isAvulsa=id.includes("aulas_avulsas");
+if(!isAvulsa)return;
+
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome do aluno");
+const profAula=getCellValue(row,table,"Professor da aula");
+let ehAluno=getCellValue(row,table,"É aluno da arena?");
+let profContratado=getCellValue(row,table,"Professor contratado");
+const st=getStatusCell(row,table);
+
+row.classList.remove("limit-alert-row");
+
+/* Identifica automaticamente se o nome está no cadastro de mensalistas */
+const profAuto = nome ? getProfessorContratadoAluno(nome) : "";
+if(nome && profAuto){
+  profContratado = profAuto;
+  setCellValue(row,table,"Professor contratado",profAuto);
+  if(!ehAluno){
+    ehAluno = "Sim";
+    setCellValue(row,table,"É aluno da arena?","Sim");
+  }
+}
+
+/* Se não achou no cadastro e a pessoa marcou que não é aluno */
+if(nome && ehAluno==="Não"){
+  setCellValue(row,table,"Professor contratado","");
+}
+
+if(data && hora && nome && profAula){
+
+  if(ehAluno==="Sim"){
+    /* Aluno cadastrado ou marcado como aluno: valor R$10 quando fizer aula avulsa */
+    setCellValue(row,table,"Valor","10.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      if(profContratado && profContratado!==profAula){
+        st.innerText=`ALUNO CADASTRADO — Professor contratado: ${profContratado} / Aula com: ${profAula} — R$ 10,00`;
+        st.className="limit-stop";
+      }else if(profContratado && profContratado===profAula){
+        st.innerText=`ALUNO CADASTRADO — Aula avulsa no próprio professor — R$ 10,00`;
+        st.className="limit-ok";
+      }else{
+        st.innerText="ALUNO DA ARENA — R$ 10,00";
+        st.className="limit-ok";
+      }
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=10;
+
+  }else if(ehAluno==="Não"){
+    /* Não aluno: valor R$20 */
+    setCellValue(row,table,"Valor","20.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      st.innerText=`NÃO ALUNO — Aula avulsa R$ 20,00`;
+      st.className="limit-stop";
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=20;
+
+  }else{
+    setCellValue(row,table,"Valor","");
+    if(st){
+      st.innerText="Selecione se é aluno da arena";
+      st.className="limit-stop";
+    }
+  }
+
+}else{
+  setCellValue(row,table,"Valor","");
+  if(st){
+    st.innerText="";
+    st.className="statusMes";
+  }
+}
+});
+});
+
+/* Cria/atualiza resumo das avulsas por professor */
+let resumo=document.getElementById("resumoAvulsas");
+if(!resumo){
+  const bloco=document.createElement("div");
+  bloco.className="box";
+  bloco.innerHTML=`<h2>Resumo de aulas avulsas por professor</h2>
+  <table id="resumoAvulsas"><thead><tr><th>Professor</th><th>Total de avulsas</th></tr></thead>
+  <tbody>
+  <tr><td>JP</td><td id="totalAvulsa_JP">R$ 0,00</td></tr>
+  <tr><td>Cavaco</td><td id="totalAvulsa_Cavaco">R$ 0,00</td></tr>
+  <tr><td>Gustavo</td><td id="totalAvulsa_Gustavo">R$ 0,00</td></tr>
+  </tbody></table>`;
+  const content=document.getElementById("content");
+  if(content && content.parentNode) content.parentNode.insertBefore(bloco, content);
+}
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalAvulsa_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoPresencaExtras(){
+const totais={JP:0,Cavaco:0,Gustavo:0};
+const table=document.getElementById("presenca_mensalistas_unica");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const profAula=getCellValue(row,table,"Professor da aula");
+const valor=parseFloat(String(getCellValue(row,table,"Valor aula extra")||"0").replace(",","."));
+if(totais.hasOwnProperty(profAula) && valor>0){
+  totais[profAula]+=valor;
+}
+});
+}
+Object.keys(totais).forEach(p=>{
+const el=document.getElementById("totalPresencaExtra_"+p);
+if(el)el.textContent=totais[p].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoMensalistas(){
+const totais={JP:0,Cavaco:0,Gustavo:0,NaoMensalista:0};
+const grupos={JP:[],Cavaco:[],Gustavo:[],NaoMensalista:[]};
+let totalGeral=0;
+
+const table=document.getElementById("mensalistas_unico");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const nome=getCellValue(row,table,"Nome do aluno");
+const plano=getCellValue(row,table,"Plano contratado");
+const prof=getCellValue(row,table,"Professor");
+let valorTexto=getCellValue(row,table,"Valor mensalidade");
+let valor=parseFloat(String(valorTexto || "0").replace(",","."));
+
+if(plano==="Não mensalista" || plano==="Aluno"){
+  valor=0;
+  setCellValue(row,table,"Valor mensalidade","0.00");
+}
+
+if(nome){
+  if(plano==="Não mensalista" || plano==="Aluno"){
+    grupos.NaoMensalista.push(nome);
+  }else if(grupos.hasOwnProperty(prof)){
+    grupos[prof].push(nome);
+  }
+}
+
+if(!isNaN(valor) && valor>0){
+ totalGeral+=valor;
+ if(totais.hasOwnProperty(prof)){
+  totais[prof]+=valor;
+ }
+}
+});
+
+const totalCell=table.querySelector(".totalValue");
+if(totalCell){
+ totalCell.textContent=totalGeral.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+}
+
+["JP","Cavaco","Gustavo"].forEach(prof=>{
+const el=document.getElementById("totalMensalista_"+prof);
+if(el)el.textContent=totais[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+
+const elNao=document.getElementById("totalMensalista_NaoMensalista");
+if(elNao)elNao.textContent=totais.NaoMensalista.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+
+Object.keys(grupos).forEach(grupo=>{
+const el=document.getElementById("grupo_"+grupo);
+if(el){
+ el.textContent=grupos[grupo].length ? grupos[grupo].join(", ") : "";
+}
+});
+}
+
+
+function updatePresencaMensalistas(){
+let rowsPlano=[];
+const table=document.getElementById("presenca_mensalistas_unica");
+if(!table)return;
+
+/* Primeiro, separa: mensalista dentro do plano, extra, aluno avulso e não aluno */
+table.querySelectorAll("tbody tr").forEach(row=>{
+row.classList.remove("limit-alert-row");
+
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+let nome=getCellValue(row,table,"Nome do aluno");
+let tipo=getCellValue(row,table,"Tipo");
+const profAula=getCellValue(row,table,"Professor da aula");
+
+if(nome==="none"||nome==="undefined")nome="";
+
+let dados=nome?getDadosMensalista(nome):{professor:"",plano:""};
+let profContratado=getCellValue(row,table,"Professor contratado") || dados.professor;
+let plano=getCellValue(row,table,"Plano contratado") || dados.plano;
+
+if(nome && (dados.professor || dados.plano)){
+ if(!tipo){tipo="Aluno";setCellValue(row,table,"Tipo","Aluno");}
+ if(profContratado)setCellValue(row,table,"Professor contratado",profContratado);
+ if(plano)setCellValue(row,table,"Plano contratado",plano);
+}
+
+const st=getStatusCell(row,table);
+
+if(data && nome && profAula){
+
+ if(tipo==="Não aluno"){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   setCellValue(row,table,"Valor aula extra","20");
+   if(st){st.innerText="NÃO ALUNO — aula avulsa R$ 20,00";st.className="limit-stop";}
+   return;
+ }
+
+ if(tipo==="Aluno" && (!plano || !profContratado)){
+   row.classList.add("limit-alert-row");
+   setCellValue(row,table,"Qtd. na semana","Avulsa");
+   if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+   if(st){st.innerText="ALUNO / PLATAFORMA — aula avulsa";st.className="limit-ok";}
+   return;
+ }
+
+ if(tipo==="Aluno" && plano && profContratado){
+   /* Se for professor diferente do contratado, vira aula extra e NÃO conta no plano semanal */
+   if(profContratado && profAula && profContratado!==profAula){
+     row.classList.add("limit-alert-row");
+     setCellValue(row,table,"Qtd. na semana","Extra");
+     if(!getCellValue(row,table,"Valor aula extra"))setCellValue(row,table,"Valor aula extra","10");
+
+     if(st){
+       st.innerText=`AULA EXTRA — professor diferente do contratado (${profContratado} → ${profAula})`;
+       st.className="limit-stop";
+     }
+   }else{
+     /* Só entra na contagem semanal se for com o professor contratado */
+     rowsPlano.push({table,row,data,hora,nome,plano,profAula,profContratado,week:getWeekKey(data)});
+   }
+   return;
+ }
+
+ if(!tipo){
+   setCellValue(row,table,"Qtd. na semana","");
+   setCellValue(row,table,"Valor aula extra","");
+   if(st){st.innerText="Selecione se é Aluno ou Não aluno";st.className="limit-stop";}
+   return;
+ }
+
+}else{
+ setCellValue(row,table,"Qtd. na semana","");
+ setCellValue(row,table,"Valor aula extra","");
+ if(st){
+  if(data&&!nome){st.innerText="Selecione o nome do aluno para contar";st.className="limit-stop";}
+  else if(nome&&!data){st.innerText="Informe a data da aula";st.className="limit-stop";}
+  else if(nome&&!profAula){st.innerText="Selecione o professor da aula";st.className="limit-stop";}
+  else{st.innerText="";st.className="statusMes";}
+ }
+}
+});
+
+/* Conta somente as aulas feitas com o professor contratado */
+rowsPlano.sort((a,b)=>{
+const ka=a.nome+"|"+a.week;
+const kb=b.nome+"|"+b.week;
+if(ka!==kb)return ka.localeCompare(kb);
+const da=(a.data||"")+" "+(a.hora||"");
+const db=(b.data||"")+" "+(b.hora||"");
+return da.localeCompare(db);
+});
+
+const counts={};
+rowsPlano.forEach(item=>{
+const key=item.nome+"|"+item.week;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+const limite=planoLimite(item.plano);
+const relacao=qtd+"/"+limite;
+setCellValue(item.row,item.table,"Qtd. na semana",relacao);
+
+const st=getStatusCell(item.row,item.table);
+
+if(qtd<=limite){
+ setCellValue(item.row,item.table,"Valor aula extra","");
+ if(st){
+   st.innerText="Dentro do plano contratado — "+relacao+" aulas na semana";
+   st.className="limit-ok";
+ }
+}else{
+ item.row.classList.add("limit-alert-row");
+ if(!getCellValue(item.row,item.table,"Valor aula extra"))setCellValue(item.row,item.table,"Valor aula extra","10");
+ if(st){
+   st.innerText="AULA EXTRA — ultrapassou o plano semanal — "+relacao;
+   st.className="limit-stop";
+ }
+}
+});
+}
+
+function updateGymCounts(){
+const allGymRows=[];
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+document.querySelectorAll("table[data-gym='true']").forEach(table=>{
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome");
+const professor=getCellValue(row,table,"Professor");
+const plataforma=getCellValue(row,table,"Plataforma");
+const check=getCellValue(row,table,"Check-in OK?");
+const st=getStatusCell(row,table);
+
+if(data&&nome&&professor&&plataforma&&check==="OK"){
+allGymRows.push({table,row,data,hora,nome,professor,plataforma,mes:data.substring(0,7)});
+}else{
+setCellValue(row,table,"Qtd. no mês","");
+setCellValue(row,table,"Valor repasse","");
+if(st){
+ if((data||nome||professor||plataforma) && check!=="OK"){
+   st.innerText="Preencha aluno, professor, plataforma e Check-in OK";
+   st.className="limit-stop";
+ }else{
+   st.innerText="";
+   st.className="statusMes";
+ }
+}
+}
+});
+});
+
+allGymRows.sort((a,b)=>{
+const ka=a.nome+"|"+a.mes;
+const kb=b.nome+"|"+b.mes;
+if(ka!==kb)return ka.localeCompare(kb);
+const da=(a.data||"")+" "+(a.hora||"");
+const db=(b.data||"")+" "+(b.hora||"");
+return da.localeCompare(db);
+});
+
+const counts={};
+allGymRows.forEach(item=>{
+const key=item.nome+"|"+item.mes;
+counts[key]=(counts[key]||0)+1;
+const qtd=counts[key];
+setCellValue(item.row,item.table,"Qtd. no mês",qtd);
+
+const st=getStatusCell(item.row,item.table);
+const valor=valorRepassePlataforma(item.plataforma);
+
+if(qtd<=LIMITE_AULAS_MES){
+setCellValue(item.row,item.table,"Valor repasse",valor.toFixed(2));
+if(st){st.innerText="Contabiliza — "+qtd+"/12 no mês";st.className="limit-ok";}
+if(totaisProfessores.hasOwnProperty(item.professor))totaisProfessores[item.professor]+=valor;
+}else{
+setCellValue(item.row,item.table,"Valor repasse",ordinalCheckin(qtd));
+if(st){st.innerText="Acima do limite mensal — "+ordinalCheckin(qtd)+" — não computa repasse";st.className="limit-stop";}
+}
+});
+
+/* cria/atualiza resumo de plataformas por professor */
+let resumo=document.getElementById("resumoPlataformas");
+if(!resumo){
+ const box=document.createElement("div");
+ box.className="box";
+ box.innerHTML=`<h2>Resumo de plataformas por professor</h2>
+ <table id="resumoPlataformas"><thead><tr><th>Professor</th><th>Total de repasse</th></tr></thead>
+ <tbody>
+ <tr><td>JP</td><td id="totalPlataforma_JP">R$ 0,00</td></tr>
+ <tr><td>Cavaco</td><td id="totalPlataforma_Cavaco">R$ 0,00</td></tr>
+ <tr><td>Gustavo</td><td id="totalPlataforma_Gustavo">R$ 0,00</td></tr>
+ </tbody></table>`;
+ const content=document.getElementById("content");
+ if(content && content.parentNode) content.parentNode.insertBefore(box, content);
+}
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalPlataforma_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+function updateAvulsasAutomaticas(){
+const totaisProfessores={JP:0,Cavaco:0,Gustavo:0};
+
+document.querySelectorAll("table").forEach(table=>{
+const id=table.id || "";
+const isAvulsa=id.includes("aulas_avulsas");
+if(!isAvulsa)return;
+
+table.querySelectorAll("tbody tr").forEach(row=>{
+const data=getCellValue(row,table,"Data");
+const hora=getCellValue(row,table,"Hora");
+const nome=getCellValue(row,table,"Nome do aluno");
+const profAula=getCellValue(row,table,"Professor da aula");
+let ehAluno=getCellValue(row,table,"É aluno da arena?");
+let profContratado=getCellValue(row,table,"Professor contratado");
+const st=getStatusCell(row,table);
+
+row.classList.remove("limit-alert-row");
+
+/* Identifica automaticamente se o nome está no cadastro de mensalistas */
+const profAuto = nome ? getProfessorContratadoAluno(nome) : "";
+if(nome && profAuto){
+  profContratado = profAuto;
+  setCellValue(row,table,"Professor contratado",profAuto);
+  if(!ehAluno){
+    ehAluno = "Sim";
+    setCellValue(row,table,"É aluno da arena?","Sim");
+  }
+}
+
+/* Se não achou no cadastro e a pessoa marcou que não é aluno */
+if(nome && ehAluno==="Não"){
+  setCellValue(row,table,"Professor contratado","");
+}
+
+if(data && hora && nome && profAula){
+
+  if(ehAluno==="Sim"){
+    /* Aluno cadastrado ou marcado como aluno: valor R$10 quando fizer aula avulsa */
+    setCellValue(row,table,"Valor","10.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      if(profContratado && profContratado!==profAula){
+        st.innerText=`ALUNO CADASTRADO — Professor contratado: ${profContratado} / Aula com: ${profAula} — R$ 10,00`;
+        st.className="limit-stop";
+      }else if(profContratado && profContratado===profAula){
+        st.innerText=`ALUNO CADASTRADO — Aula avulsa no próprio professor — R$ 10,00`;
+        st.className="limit-ok";
+      }else{
+        st.innerText="ALUNO DA ARENA — R$ 10,00";
+        st.className="limit-ok";
+      }
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=10;
+
+  }else if(ehAluno==="Não"){
+    /* Não aluno: valor R$20 */
+    setCellValue(row,table,"Valor","20.00");
+    row.classList.add("limit-alert-row");
+
+    if(st){
+      st.innerText=`NÃO ALUNO — Aula avulsa R$ 20,00`;
+      st.className="limit-stop";
+    }
+
+    if(totaisProfessores.hasOwnProperty(profAula))totaisProfessores[profAula]+=20;
+
+  }else{
+    setCellValue(row,table,"Valor","");
+    if(st){
+      st.innerText="Selecione se é aluno da arena";
+      st.className="limit-stop";
+    }
+  }
+
+}else{
+  setCellValue(row,table,"Valor","");
+  if(st){
+    st.innerText="";
+    st.className="statusMes";
+  }
+}
+});
+});
+
+/* Cria/atualiza resumo das avulsas por professor */
+let resumo=document.getElementById("resumoAvulsas");
+if(!resumo){
+  const bloco=document.createElement("div");
+  bloco.className="box";
+  bloco.innerHTML=`<h2>Resumo de aulas avulsas por professor</h2>
+  <table id="resumoAvulsas"><thead><tr><th>Professor</th><th>Total de avulsas</th></tr></thead>
+  <tbody>
+  <tr><td>JP</td><td id="totalAvulsa_JP">R$ 0,00</td></tr>
+  <tr><td>Cavaco</td><td id="totalAvulsa_Cavaco">R$ 0,00</td></tr>
+  <tr><td>Gustavo</td><td id="totalAvulsa_Gustavo">R$ 0,00</td></tr>
+  </tbody></table>`;
+  const content=document.getElementById("content");
+  if(content && content.parentNode) content.parentNode.insertBefore(bloco, content);
+}
+Object.keys(totaisProfessores).forEach(prof=>{
+ const el=document.getElementById("totalAvulsa_"+prof);
+ if(el)el.textContent=totaisProfessores[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoPresencaExtras(){
+const totais={JP:0,Cavaco:0,Gustavo:0};
+const table=document.getElementById("presenca_mensalistas_unica");
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const profAula=getCellValue(row,table,"Professor da aula");
+const valor=parseFloat(String(getCellValue(row,table,"Valor aula extra")||"0").replace(",","."));
+if(totais.hasOwnProperty(profAula) && valor>0){
+  totais[profAula]+=valor;
+}
+});
+}
+Object.keys(totais).forEach(p=>{
+const el=document.getElementById("totalPresencaExtra_"+p);
+if(el)el.textContent=totais[p].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+
+function updateResumoMensalistas(){
+const totais={JP:0,Cavaco:0,Gustavo:0};
+let totalGeral=0;
+const table=document.getElementById("mensalistas_unico");
+
+if(table){
+table.querySelectorAll("tbody tr").forEach(row=>{
+const prof=getCellValue(row,table,"Professor");
+const valorTexto=getCellValue(row,table,"Valor mensalidade");
+const valor=parseFloat(String(valorTexto || "0").replace(",","."));
+
+if(!isNaN(valor) && valor>0){
+ totalGeral+=valor;
+ if(totais.hasOwnProperty(prof)){
+  totais[prof]+=valor;
+ }
+}
+});
+
+/* Total geral no rodapé do cadastro único */
+const totalCell=table.querySelector(".totalValue");
+if(totalCell){
+ totalCell.textContent=totalGeral.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+}
+
+/* Resumo por professor */
+Object.keys(totais).forEach(prof=>{
+const el=document.getElementById("totalMensalista_"+prof);
+if(el){
+ el.textContent=totais[prof].toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+});
+}
+
+function updateTotals(){
+updateResumoMensalistas();
+updatePresencaMensalistas();
+updateResumoPresencaExtras();
+updateGymCounts();
+updateAvulsasAutomaticas();
+document.querySelectorAll("table[data-valor='true']").forEach(table=>{
+if(table.id==="mensalistas_unico")return;
+let total=0,ths=headers(table),valorIndex=ths.findIndex(h=>h.includes("Valor"));
+table.querySelectorAll("tbody tr").forEach(row=>{if(valorIndex>=0){const el=row.children[valorIndex].querySelector("input");const raw=(el&&el.value)||"";const n=String(raw).includes("check-in")?NaN:parseFloat(raw||0);if(!isNaN(n))total+=n}});
+const totalCell=table.querySelector(".totalValue");
+if(totalCell)totalCell.textContent=total.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+});
+}
+
+function collectData(){
+const data={};
+document.querySelectorAll("table").forEach(table=>{
+data[table.id]=[];
+table.querySelectorAll("tbody tr").forEach(row=>{
+const rowData=[];row.querySelectorAll("input, select").forEach(el=>rowData.push(el.value));data[table.id].push(rowData)
+});
+});
+return data
+}
+function saveData(){localStorage.setItem("controle_arena_ajj_v57_online_firebase",JSON.stringify(collectData()));localStorage.setItem("controle_arena_ajj_alunos",JSON.stringify(alunos));alert("Dados salvos neste navegador.")}
+function saveDataAuto(){localStorage.setItem("controle_arena_ajj_v57_online_firebase",JSON.stringify(collectData()));localStorage.setItem("controle_arena_ajj_alunos",JSON.stringify(alunos))}
+function loadData(){
+const saved=localStorage.getItem("controle_arena_ajj_v57_online_firebase")||localStorage.getItem("controle_arena_ajj_v21")||localStorage.getItem("controle_arena_ajj_v20")||localStorage.getItem("controle_arena_ajj_v19")||localStorage.getItem("controle_arena_ajj_v4")||localStorage.getItem("controle_arena_ajj_v3")||localStorage.getItem("controle_arena_ajj");
+if(!saved)return;
+const data=JSON.parse(saved);
+Object.keys(data).forEach(tableId=>{
+const table=document.getElementById(tableId);if(!table)return;
+const rows=table.querySelectorAll("tbody tr");
+data[tableId].forEach((rowData,i)=>{if(!rows[i])return;const fields=rows[i].querySelectorAll("input, select");rowData.forEach((value,j)=>{if(fields[j])fields[j].value=value})})
+});
+refreshAlunoSelects();
+document.querySelectorAll('select').forEach(s=>{ if(Array.from(s.options).some(o=>String(o.textContent).includes('TotalPass')||String(o.textContent).includes('Gympass'))) atualizarCorPlataforma(s); });
+updateTotals();
+filtrarCadastroUnico();document.querySelectorAll('select').forEach(s=>{ if(Array.from(s.options).some(o=>String(o.textContent).includes('TotalPass')||String(o.textContent).includes('Gympass'))) atualizarCorPlataforma(s); })
+}
+function clearData(){if(confirm("Tem certeza que deseja limpar todos os dados salvos?")){localStorage.removeItem("controle_arena_ajj");localStorage.removeItem("controle_arena_ajj_v3");localStorage.removeItem("controle_arena_ajj_v4");localStorage.removeItem("controle_arena_ajj_v57_online_firebase");localStorage.removeItem("controle_arena_ajj_alunos");location.reload()}}
+function downloadBackup(){
+const data=JSON.stringify({alunos,tabelas:collectData()},null,2),blob=new Blob([data],{type:"application/json"}),a=document.createElement("a");
+a.href=URL.createObjectURL(blob);a.download="backup_controle_arena_ajj.json";a.click()
+}
+render();
+const mensalistasBody=document.querySelector("#mensalistas_unico tbody");
+if(mensalistasBody && mensalistasBody.children.length===0){
+ for(let i=0;i<20;i++){mensalistasBody.insertAdjacentHTML("beforeend",rowHtmlMensalistaUnico());}
+}
+const presencaBody=document.querySelector("#presenca_mensalistas_unica tbody");
+if(presencaBody && presencaBody.children.length===0){
+ for(let i=0;i<30;i++){presencaBody.insertAdjacentHTML("beforeend",rowHtmlPresencaUnica());}
+}
+const plataformasBody=document.querySelector("#plataformas_unica tbody");
+if(plataformasBody && plataformasBody.children.length===0){
+ for(let i=0;i<30;i++){plataformasBody.insertAdjacentHTML("beforeend",rowHtmlPlataformaUnica());}
+}
+renderAlunos();loadData();refreshAlunoSelects();updateTotals();
+
+
+
+/* === CORREÇÃO V49: resumo total por plataforma separado === */
+function normalizarTextoPlataformaV49(texto){
+return String(texto || "")
+ .toLowerCase()
+ .normalize("NFD")
+ .replace(/[\u0300-\u036f]/g,"")
+ .trim();
+}
+
+function valorRepasseV49(plataforma){
+const p=normalizarTextoPlataformaV49(plataforma);
+
+if(p.includes("totalpass") || p.includes("total pass") || p.includes("totalpes") || p.includes("total pes")){
+ return 9.63;
+}
+
+if(p.includes("gympass") || p.includes("gimpass") || p.includes("gimpes") || p.includes("ginpes") || p.includes("wellhub") || p.includes("hub") || p.includes("ruby") || p.includes("arub") || p.includes("aruba") || p.includes("airhub") || p.includes("uber") || p.includes("impez") || p.includes("impes")){
+ return 10.66;
+}
+
+return 0;
+}
+
+function grupoPlataformaV49(plataforma){
+const p=normalizarTextoPlataformaV49(plataforma);
+
+if(p.includes("totalpass") || p.includes("total pass") || p.includes("totalpes") || p.includes("total pes")){
+ return "totalpass";
+}
+
+if(p.includes("gympass") || p.includes("gimpass") || p.includes("gimpes") || p.includes("ginpes") || p.includes("wellhub") || p.includes("hub") || p.includes("ruby") || p.includes("arub") || p.includes("aruba") || p.includes("airhub") || p.includes("uber") || p.includes("impez") || p.includes("impes")){
+ return "gympass";
+}
+
+return "";
+}
+
+function atualizarResumoTotalPlataformasV49(){
+const table=document.getElementById("plataformas_unica");
+if(!table)return;
+
+let totalGympass=0;
+let totalTotalpass=0;
+let totalGeral=0;
+const linhas=[];
+
+table.querySelectorAll("tbody tr").forEach(row=>{
+ const data=getCellValue(row,table,"Data");
+ const hora=getCellValue(row,table,"Hora");
+ const nome=getCellValue(row,table,"Nome");
+ const plataforma=getCellValue(row,table,"Plataforma");
+ const valor=valorRepasseV49(plataforma);
+ const grupo=grupoPlataformaV49(plataforma);
+
+ if(plataforma && valor>0){
+   setCellValue(row,table,"Valor repasse",valor.toFixed(2));
+ }
+
+ if(data && nome && plataforma && grupo){
+   linhas.push({
+     row:row,
+     data:data,
+     hora:hora,
+     nome:nome,
+     plataforma:plataforma,
+     valor:valor,
+     grupo:grupo,
+     mes:String(data).substring(0,7)
+   });
+ }
+});
+
+linhas.sort((a,b)=>{
+ const ka=a.nome+"|"+a.mes;
+ const kb=b.nome+"|"+b.mes;
+ if(ka!==kb)return ka.localeCompare(kb);
+ return ((a.data||"")+" "+(a.hora||"")).localeCompare((b.data||"")+" "+(b.hora||""));
+});
+
+const contagem={};
+
+linhas.forEach(item=>{
+ const key=item.nome+"|"+item.mes;
+ contagem[key]=(contagem[key]||0)+1;
+ const qtd=contagem[key];
+
+ setCellValue(item.row,table,"Qtd. no mês",qtd);
+
+ if(qtd<=12){
+   setCellValue(item.row,table,"Valor repasse",item.valor.toFixed(2));
+
+   if(item.grupo==="gympass"){
+     totalGympass+=item.valor;
+   }
+
+   if(item.grupo==="totalpass"){
+     totalTotalpass+=item.valor;
+   }
+
+   totalGeral+=item.valor;
+ }else{
+   setCellValue(item.row,table,"Valor repasse","0.00");
+ }
+});
+
+const elGym=document.getElementById("totalResumoGympass");
+if(elGym){
+ elGym.textContent=totalGympass.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+
+const elTotal=document.getElementById("totalResumoTotalpass");
+if(elTotal){
+ elTotal.textContent=totalTotalpass.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+
+const totalCell=table.querySelector(".totalValue");
+if(totalCell){
+ totalCell.textContent=totalGeral.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+}
+
+document.addEventListener("input",function(e){
+ if(e.target && e.target.closest && e.target.closest("#plataformas_unica")){
+   atualizarResumoTotalPlataformasV49();
+ }
+});
+
+document.addEventListener("change",function(e){
+ if(e.target && e.target.closest && e.target.closest("#plataformas_unica")){
+   atualizarResumoTotalPlataformasV49();
+ }
+});
+
+const updateTotalsAntesResumoPlataformaV49=updateTotals;
+updateTotals=function(){
+ if(typeof updateTotalsAntesResumoPlataformaV49==="function"){
+   updateTotalsAntesResumoPlataformaV49();
+ }
+ atualizarResumoTotalPlataformasV49();
+};
+
+setTimeout(atualizarResumoTotalPlataformasV49,500);
+setInterval(atualizarResumoTotalPlataformasV49,1500);
+
+
+
+
+/* === V53: busca fixa de aluno com seta que não desaparece === */
+function coletarNomesAlunosV53(){
+let nomes=[];
+function add(nome){
+ nome=String(nome||"").trim();
+ if(nome && nome!=="none" && nome!=="undefined" && !nomes.includes(nome))nomes.push(nome);
+}
+if(Array.isArray(alunos))alunos.forEach(add);
+
+const cadastro=document.getElementById("mensalistas_unico");
+if(cadastro){
+ cadastro.querySelectorAll("tbody tr").forEach(row=>add(getCellValue(row,cadastro,"Nome do aluno")));
+}
+
+const plataformas=document.getElementById("plataformas_unica");
+if(plataformas){
+ plataformas.querySelectorAll("tbody tr").forEach(row=>{
+   const headers=Array.from(plataformas.querySelectorAll("thead th")).map(th=>th.innerText.trim());
+   const idx=headers.indexOf("Nome");
+   if(idx>=0 && row.children[idx]){
+    const inp=row.children[idx].querySelector("input");
+    if(inp)add(inp.value);
+   }
+ });
+}
+return nomes.sort((a,b)=>a.localeCompare(b));
+}
+
+function montarListaBuscaAlunoV53(box, filtro=""){
+const lista=box.querySelector(".listaBuscaAluno");
+if(!lista)return;
+const termo=String(filtro||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const nomes=coletarNomesAlunosV53().filter(n=>{
+ const normal=String(n).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+ return !termo || normal.includes(termo);
+});
+lista.innerHTML="";
+nomes.forEach(nome=>{
+ const item=document.createElement("div");
+ item.textContent=nome;
+ item.onclick=function(){
+   const input=box.querySelector("input");
+   input.value=nome;
+   lista.classList.remove("aberta");
+   if(typeof atualizarResumoTotalPlataformasV49==="function")atualizarResumoTotalPlataformasV49();
+   if(typeof updateTotals==="function")updateTotals();
+   if(typeof saveDataAuto==="function")saveDataAuto();
+ };
+ lista.appendChild(item);
+});
+if(nomes.length===0){
+ const vazio=document.createElement("div");
+ vazio.textContent="Nenhum aluno encontrado";
+ vazio.style.color="#666";
+ lista.appendChild(vazio);
+}
+}
+
+function criarBuscaAlunoV53(valor=""){
+const safe=String(valor||"").replace(/"/g,"&quot;");
+return `<div class="buscaAlunoBox">
+<span class="lupaBusca">🔍</span>
+<input type="text" value="${safe}" placeholder="Digite para buscar aluno" oninput="montarListaBuscaAlunoV53(this.closest('.buscaAlunoBox'),this.value);this.closest('.buscaAlunoBox').querySelector('.listaBuscaAluno').classList.add('aberta'); if(typeof atualizarResumoTotalPlataformasV49==='function')atualizarResumoTotalPlataformasV49(); if(typeof updateTotals==='function')updateTotals(); if(typeof saveDataAuto==='function')saveDataAuto();">
+<button type="button" class="buscaAlunoBtn" onclick="const box=this.closest('.buscaAlunoBox');const lista=box.querySelector('.listaBuscaAluno');montarListaBuscaAlunoV53(box,box.querySelector('input').value);lista.classList.toggle('aberta');">▼</button>
+<div class="listaBuscaAluno"></div>
+</div>`;
+}
+
+function aplicarBuscaNomePlataformasV53(){
+const table=document.getElementById("plataformas_unica");
+if(!table)return;
+const headers=Array.from(table.querySelectorAll("thead th")).map(th=>th.innerText.trim());
+const idx=headers.indexOf("Nome");
+if(idx<0)return;
+
+table.querySelectorAll("tbody tr").forEach(row=>{
+ const td=row.children[idx];
+ if(!td || td.dataset.buscaAlunoV53==="1")return;
+ const atual=getCellValue(row,table,"Nome");
+ td.innerHTML=criarBuscaAlunoV53(atual && atual!=="undefined" && atual!=="none" ? atual : "");
+ td.dataset.buscaAlunoV53="1";
+});
+}
+
+document.addEventListener("click",function(e){
+ document.querySelectorAll(".listaBuscaAluno.aberta").forEach(lista=>{
+   if(!lista.closest(".buscaAlunoBox").contains(e.target)){
+     lista.classList.remove("aberta");
+   }
+ });
+});
+
+const addAlunoOriginalV53 = typeof addAluno==="function" ? addAluno : null;
+if(addAlunoOriginalV53){
+ addAluno=function(){
+  addAlunoOriginalV53();
+  aplicarBuscaNomePlataformasV53();
+ };
+}
+
+const addRowOriginalV53 = typeof addRow==="function" ? addRow : null;
+if(addRowOriginalV53){
+ addRow=function(tableId){
+  addRowOriginalV53(tableId);
+  aplicarBuscaNomePlataformasV53();
+ };
+}
+
+setTimeout(aplicarBuscaNomePlataformasV53,500);
+setInterval(aplicarBuscaNomePlataformasV53,1500);
+
+
+
+
+/* === V56: cadastro rápido visível + lista recolhível com persistência === */
+const CHAVE_ALUNOS_V56="controle_arena_ajj_alunos_plataformas_v56";
+const CHAVE_LISTA_ABERTA_V56="controle_arena_ajj_lista_alunos_aberta_v56";
+
+function salvarAlunosPlataformaV56(){
+ try{
+   if(Array.isArray(alunos)){
+     localStorage.setItem(CHAVE_ALUNOS_V56, JSON.stringify(alunos));
+   }
+ }catch(e){}
+}
+
+function carregarAlunosPlataformaV56(){
+ try{
+   const salvos=localStorage.getItem(CHAVE_ALUNOS_V56);
+   if(salvos){
+     const arr=JSON.parse(salvos);
+     if(Array.isArray(arr) && Array.isArray(alunos)){
+       arr.forEach(nome=>{
+         nome=String(nome||"").trim();
+         if(nome && !alunos.includes(nome)) alunos.push(nome);
+       });
+     }
+   }
+ }catch(e){}
+}
+
+function salvarEstadoListaV56(aberta){
+ try{localStorage.setItem(CHAVE_LISTA_ABERTA_V56, aberta ? "1" : "0");}catch(e){}
+}
+
+function listaAbertaV56(){
+ try{return localStorage.getItem(CHAVE_LISTA_ABERTA_V56)==="1";}catch(e){return false;}
+}
+
+function renderListaAlunosRecolhivelV56(){
+  carregarAlunosPlataformaV56();
+
+  const titulos=Array.from(document.querySelectorAll("h2,h3"));
+  const titulo=titulos.find(t=>{
+    const txt=String(t.innerText||"").toLowerCase();
+    return txt.includes("cadastro rápido") || txt.includes("cadastro rapido");
+  });
+  if(!titulo)return;
+
+  const box=titulo.closest(".box") || titulo.parentElement;
+  if(!box)return;
+
+  let toggle=document.getElementById("toggleListaAlunosV56");
+  let lista=document.getElementById("listaAlunosRecolhivelV56");
+
+  if(!toggle){
+    toggle=document.createElement("div");
+    toggle.id="toggleListaAlunosV56";
+    toggle.className="lista-alunos-toggle-v56";
+    toggle.innerHTML='<span>▶ Lista de alunos cadastrados</span><span>Abrir/fechar</span>';
+    toggle.onclick=function(){
+      const listaAtual=document.getElementById("listaAlunosRecolhivelV56");
+      if(!listaAtual)return;
+      listaAtual.classList.toggle("recolhida");
+      const aberta=!listaAtual.classList.contains("recolhida");
+      salvarEstadoListaV56(aberta);
+      toggle.querySelector("span").innerText=(aberta?"▼":"▶")+" Lista de alunos cadastrados";
+      if(aberta) setTimeout(()=>listaAtual.scrollIntoView({behavior:"smooth",block:"nearest"}),100);
+    };
+
+    lista=document.createElement("div");
+    lista.id="listaAlunosRecolhivelV56";
+    lista.className="lista-alunos-box-v56";
+
+    box.appendChild(toggle);
+    box.appendChild(lista);
+  }
+
+  lista=document.getElementById("listaAlunosRecolhivelV56");
+  toggle=document.getElementById("toggleListaAlunosV56");
+  if(!lista || !toggle)return;
+
+  const aberta=listaAbertaV56();
+  lista.classList.toggle("recolhida", !aberta);
+  toggle.querySelector("span").innerText=(aberta?"▼":"▶")+" Lista de alunos cadastrados";
+
+  lista.innerHTML="";
+
+  if(!Array.isArray(alunos) || alunos.length===0){
+    lista.innerHTML='<div style="padding:8px;color:#666;">Nenhum aluno cadastrado ainda.</div>';
+    return;
+  }
+
+  alunos.forEach((nome,idx)=>{
+    const item=document.createElement("div");
+    item.className="aluno-item-v56";
+    const span=document.createElement("span");
+    span.textContent=nome;
+
+    const btn=document.createElement("button");
+    btn.type="button";
+    btn.className="danger";
+    btn.textContent="Excluir";
+    btn.onclick=function(){
+      if(confirm("Excluir este aluno da lista?")){
+        alunos.splice(idx,1);
+        salvarAlunosPlataformaV56();
+        if(typeof saveDataAuto==="function")saveDataAuto();
+        renderListaAlunosRecolhivelV56();
+        if(typeof atualizarDatalistAlunosV51==="function")atualizarDatalistAlunosV51();
+        if(typeof aplicarBuscaNomePlataformasV53==="function")aplicarBuscaNomePlataformasV53();
+      }
+    };
+
+    item.appendChild(span);
+    item.appendChild(btn);
+    lista.appendChild(item);
+  });
+}
+
+function ocultarListasAntigasCadastroRapidoV56(){
+  const titulos=Array.from(document.querySelectorAll("h2,h3"));
+  const titulo=titulos.find(t=>{
+    const txt=String(t.innerText||"").toLowerCase();
+    return txt.includes("cadastro rápido") || txt.includes("cadastro rapido");
+  });
+  if(!titulo)return;
+
+  const box=titulo.closest(".box") || titulo.parentElement;
+  if(!box)return;
+
+  Array.from(box.children).forEach(el=>{
+    if(el.id==="toggleListaAlunosV56" || el.id==="listaAlunosRecolhivelV56")return;
+    if(el===titulo)return;
+    if(el.querySelector && el.querySelector("input"))return;
+    if(el.querySelector && el.querySelector("button") && String(el.innerText||"").toLowerCase().includes("adicionar"))return;
+
+    const txt=String(el.innerText||"").toLowerCase();
+    if(txt.includes("excluir") || txt.split("\n").length>5) el.style.display="none";
+  });
+}
+
+const renderAlunosOriginalV56 = typeof renderAlunos==="function" ? renderAlunos : null;
+if(renderAlunosOriginalV56){
+  renderAlunos=function(){
+    carregarAlunosPlataformaV56();
+    renderAlunosOriginalV56();
+    setTimeout(function(){
+      ocultarListasAntigasCadastroRapidoV56();
+      renderListaAlunosRecolhivelV56();
+    },50);
+  };
+}
+
+const addAlunoOriginalV56 = typeof addAluno==="function" ? addAluno : null;
+if(addAlunoOriginalV56){
+  addAluno=function(){
+    addAlunoOriginalV56();
+    salvarAlunosPlataformaV56();
+    if(typeof saveDataAuto==="function")saveDataAuto();
+    setTimeout(function(){
+      ocultarListasAntigasCadastroRapidoV56();
+      renderListaAlunosRecolhivelV56();
+      if(typeof atualizarDatalistAlunosV51==="function")atualizarDatalistAlunosV51();
+      if(typeof aplicarBuscaNomePlataformasV53==="function")aplicarBuscaNomePlataformasV53();
+    },50);
+  };
+}
+
+const saveDataAutoOriginalV56 = typeof saveDataAuto==="function" ? saveDataAuto : null;
+if(saveDataAutoOriginalV56){
+  saveDataAuto=function(){
+    salvarAlunosPlataformaV56();
+    saveDataAutoOriginalV56();
+  };
+}
+
+window.addEventListener("beforeunload", salvarAlunosPlataformaV56);
+
+setTimeout(function(){
+  carregarAlunosPlataformaV56();
+  ocultarListasAntigasCadastroRapidoV56();
+  renderListaAlunosRecolhivelV56();
+  if(typeof atualizarDatalistAlunosV51==="function")atualizarDatalistAlunosV51();
+  if(typeof aplicarBuscaNomePlataformasV53==="function")aplicarBuscaNomePlataformasV53();
+},500);
+
+setInterval(function(){
+  salvarAlunosPlataformaV56();
+  ocultarListasAntigasCadastroRapidoV56();
+  renderListaAlunosRecolhivelV56();
+},2000);
+
+</script>
+
+<script type="module">
+/*
+=========================================================
+SALVAMENTO ONLINE - FIREBASE
+=========================================================
+
+PASSO 1:
+Crie um projeto gratuito no Firebase.
+
+PASSO 2:
+Ative Firestore Database.
+
+PASSO 3:
+Copie a configuração do seu app web e cole abaixo.
+
+PASSO 4:
+Troque todos os campos entre aspas em firebaseConfig.
+
+ATENÇÃO:
+Enquanto estiver com "COLE_AQUI", continuará funcionando localmente,
+mas NÃO sincronizará entre celular e computador.
+*/
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "COLE_AQUI",
+  authDomain: "COLE_AQUI",
+  projectId: "COLE_AQUI",
+  storageBucket: "COLE_AQUI",
+  messagingSenderId: "COLE_AQUI",
+  appId: "COLE_AQUI"
+};
+
+/*
+Nome do documento online.
+Use o mesmo nome em todos os aparelhos.
+*/
+const DOCUMENTO_ONLINE = "arena-ajj-controle-principal";
+
+let dbOnline = null;
+let salvandoOnline = false;
+let carregandoOnline = false;
+
+function firebaseConfigurado(){
+  return firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("COLE_AQUI") && firebaseConfig.projectId && !firebaseConfig.projectId.includes("COLE_AQUI");
+}
+
+function setFirebaseStatus(msg, ok=false){
+  const el = document.getElementById("firebaseStatus");
+  if(el){
+    el.textContent = msg;
+    el.style.color = ok ? "#15803d" : "#b45309";
+    el.style.fontWeight = "bold";
+  }
+}
+
+async function iniciarFirebaseOnline(){
+  if(!firebaseConfigurado()){
+    setFirebaseStatus("Firebase ainda não configurado. A planilha está salvando apenas neste aparelho.");
+    return;
+  }
+
+  try{
+    const app = initializeApp(firebaseConfig);
+    dbOnline = getFirestore(app);
+    setFirebaseStatus("Conectado à nuvem. Sincronização ativa.", true);
+
+    const ref = doc(dbOnline, "planilhas_arena_ajj", DOCUMENTO_ONLINE);
+
+    const snap = await getDoc(ref);
+    if(snap.exists() && snap.data().dados){
+      carregandoOnline = true;
+      try{
+        localStorage.setItem("controle_arena_ajj_v57_online_firebase", JSON.stringify(snap.data().dados));
+        if(typeof loadData === "function") loadData();
+        if(typeof renderAlunos === "function") renderAlunos();
+        if(typeof updateTotals === "function") updateTotals();
+      }finally{
+        carregandoOnline = false;
+      }
+    }else{
+      await salvarNaNuvemAgora();
+    }
+
+    onSnapshot(ref, (docSnap)=>{
+      if(!docSnap.exists() || salvandoOnline) return;
+      const dados = docSnap.data().dados;
+      if(!dados) return;
+
+      carregandoOnline = true;
+      try{
+        localStorage.setItem("controle_arena_ajj_v57_online_firebase", JSON.stringify(dados));
+        if(typeof loadData === "function") loadData();
+        if(typeof renderAlunos === "function") renderAlunos();
+        if(typeof updateTotals === "function") updateTotals();
+        setFirebaseStatus("Dados atualizados pela nuvem.", true);
+      }catch(e){
+        console.error(e);
+      }finally{
+        carregandoOnline = false;
+      }
+    });
+
+  }catch(e){
+    console.error(e);
+    setFirebaseStatus("Erro ao conectar no Firebase. Confira a configuração e regras do Firestore.");
+  }
+}
+
+async function salvarNaNuvemAgora(){
+  if(!dbOnline || carregandoOnline) return;
+  try{
+    salvandoOnline = true;
+    const ref = doc(dbOnline, "planilhas_arena_ajj", DOCUMENTO_ONLINE);
+
+    let dados = null;
+    if(typeof collectData === "function"){
+      dados = collectData();
+    }else{
+      const raw = localStorage.getItem("controle_arena_ajj_v57_online_firebase");
+      dados = raw ? JSON.parse(raw) : {};
+    }
+
+    await setDoc(ref, {
+      dados,
+      atualizadoEm: serverTimestamp()
+    }, { merge:true });
+
+    setFirebaseStatus("Salvo na nuvem.", true);
+  }catch(e){
+    console.error(e);
+    setFirebaseStatus("Erro ao salvar na nuvem.");
+  }finally{
+    setTimeout(()=>{ salvandoOnline = false; }, 300);
+  }
+}
+
+/*
+Integra com o salvamento automático já existente.
+*/
+const saveDataAutoOriginalOnline = window.saveDataAuto;
+window.saveDataAuto = function(){
+  if(typeof saveDataAutoOriginalOnline === "function"){
+    saveDataAutoOriginalOnline();
+  }
+  salvarNaNuvemAgora();
+};
+
+document.addEventListener("input", ()=>{
+  clearTimeout(window.__timerSalvarOnline);
+  window.__timerSalvarOnline = setTimeout(salvarNaNuvemAgora, 800);
+});
+
+document.addEventListener("change", ()=>{
+  clearTimeout(window.__timerSalvarOnline);
+  window.__timerSalvarOnline = setTimeout(salvarNaNuvemAgora, 500);
+});
+
+window.addEventListener("beforeunload", ()=>{
+  salvarNaNuvemAgora();
+});
+
+iniciarFirebaseOnline();
+</script>
+
+</body>
+</html>
