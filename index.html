@@ -3151,9 +3151,10 @@ setInterval(()=>{salvarAlunosFixo();ocultarListaAntigaCadastroRapidoFixo();rende
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD7k6S_b0t4fxl-FhTZ6ozE4mi6BvRS_9g",
+  apiKey: "AIzaSyD7k6S_b0t4fxL-FhTZ6ozE4mi6BvRS_9g",
   authDomain: "arena-ajj-controle.firebaseapp.com",
   projectId: "arena-ajj-controle",
   storageBucket: "arena-ajj-controle.firebasestorage.app",
@@ -3162,6 +3163,66 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const ref = doc(db, "controle_arena_ajj", "dados_principais");
+
+let carregando = false;
+
+async function salvarNaNuvem() {
+  if (carregando) return;
+
+  const dados = {};
+  Object.keys(localStorage).forEach(chave => {
+    if (chave.includes("controle_arena_ajj")) {
+      dados[chave] = localStorage.getItem(chave);
+    }
+  });
+
+  await setDoc(ref, {
+    dados,
+    atualizadoEm: serverTimestamp()
+  });
+}
+
+function carregarDaNuvem(dados) {
+  if (!dados) return;
+  carregando = true;
+
+  Object.keys(dados).forEach(chave => {
+    localStorage.setItem(chave, dados[chave]);
+  });
+
+  if (typeof loadData === "function") loadData();
+  if (typeof renderAlunos === "function") renderAlunos();
+  if (typeof updateTotals === "function") updateTotals();
+
+  carregando = false;
+}
+
+onSnapshot(ref, snap => {
+  if (snap.exists()) {
+    carregarDaNuvem(snap.data().dados);
+  }
+});
+
+document.addEventListener("input", () => {
+  clearTimeout(window.timerNuvem);
+  window.timerNuvem = setTimeout(salvarNaNuvem, 800);
+});
+
+document.addEventListener("change", () => {
+  clearTimeout(window.timerNuvem);
+  window.timerNuvem = setTimeout(salvarNaNuvem, 800);
+});
+
+setTimeout(async () => {
+  const snap = await getDoc(ref);
+  if (snap.exists()) {
+    carregarDaNuvem(snap.data().dados);
+  } else {
+    salvarNaNuvem();
+  }
+}, 1000);
 </script>
 
 
